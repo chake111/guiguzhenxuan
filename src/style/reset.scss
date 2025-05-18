@@ -93,7 +93,7 @@ html [type="button"],
 [type="reset"],
 [type="submit"] {
     border: 0;
-    color: inherit;
+    // color: inherit; // 移除或注释掉这行
     -webkit-appearance: button;
     appearance: button;
     cursor: pointer;
@@ -128,14 +128,10 @@ input::-moz-placeholder {
 }
 
 [type="number"]::-webkit-inner-spin-button,
-[type="number"]::-webkit-inner-spin-button,
 [type="number"]::-webkit-outer-spin-button {
     margin: 0;
     height: auto;
     -webkit-appearance: none;
-    appearance: none;
-    appearance: none;
-    appearance: none;
     appearance: none;
 }
 

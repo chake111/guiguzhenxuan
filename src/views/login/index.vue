@@ -39,6 +39,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { nextTick, reactive, ref } from 'vue';
 import { useUserStore } from '@/stores/user';
+import type { loginForm } from '@/api/user/type';
 import { useRouter, useRoute } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import { getTime } from '@/utils/time';
@@ -140,9 +141,6 @@ const rules = {
 
         .login_btn {
             width: 100%;
-            background-color: #409EFF;
-            border-color: #409EFF;
-            color: #fff;
         }
     }
 }
