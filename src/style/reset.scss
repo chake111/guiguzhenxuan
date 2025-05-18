@@ -1,0 +1,166 @@
+* {
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    line-height: 1;
+}
+
+article,
+aside,
+footer,
+header,
+nav,
+section,
+main,
+figcaption,
+figure,
+menu,
+details {
+    display: block;
+}
+
+audio,
+canvas,
+video {
+    display: inline-block;
+}
+
+img {
+    display: block;
+    border: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    margin: 0;
+    padding: 0;
+    font-weight: normal;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+address,
+cite,
+dfn,
+em,
+var {
+    font-style: normal;
+}
+
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+// 移除 a 的 background-color、color、font-size、text-decoration reset，避免影响 el-link 等
+a {
+    // ...仅保留必要 reset...
+}
+
+a:active,
+a:hover {
+    outline: 0;
+}
+
+:focus {
+    outline: 0;
+}
+
+// 移除 button、input、select、textarea 的全局 reset，避免影响 element-plus 组件
+// button,
+// input,
+// select,
+// textarea {
+//     margin: 0;
+//     font-size: inherit;
+// }
+
+button,
+html [type="button"],
+[type="reset"],
+[type="submit"] {
+    border: 0;
+    color: inherit;
+    -webkit-appearance: button;
+    appearance: button;
+    cursor: pointer;
+}
+
+// button::-moz-focus-inner,
+// input::-moz-focus-inner {
+//     border: 0;
+//     padding: 0;
+// }
+
+input {
+    padding: 0;
+    line-height: normal;
+}
+
+input::-webkit-input-placeholder {
+    font-weight: 300;
+}
+
+input::-ms-input-placeholder {
+    font-weight: 300;
+}
+
+input::-moz-placeholder {
+    font-weight: 300;
+}
+
+[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+    margin: 0;
+    height: auto;
+    -webkit-appearance: none;
+    appearance: none;
+    appearance: none;
+    appearance: none;
+    appearance: none;
+}
+
+[type="search"] {
+    -webkit-appearance: textfield;
+    appearance: textfield;
+}
+
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+textarea {
+    overflow: auto;
+    resize: none;
+    -webkit-appearance: none;
+}
+
+select {
+    -webkit-appearance: none;
+    background-color: #fff;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}

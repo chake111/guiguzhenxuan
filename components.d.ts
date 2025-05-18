@@ -14,6 +14,10 @@ declare module 'vue' {
     ElBttuon: typeof import('element-plus/es')['ElBttuon']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElButtuon: typeof import('element-plus/es')['ElButtuon']
+<<<<<<< HEAD
+=======
+    ElCard: typeof import('element-plus/es')['ElCard']
+>>>>>>> 99b9f66 (init)
     ElCol: typeof import('element-plus/es')['ElCol']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
     ElDropdownItem: typeof import('element-plus/es')['ElDropdownItem']
