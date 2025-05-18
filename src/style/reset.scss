@@ -65,9 +65,7 @@ ol {
     list-style-type: none;
 }
 
-// 移除 a 的 background-color、color、font-size、text-decoration reset，避免影响 el-link 等
 a {
-    // ...仅保留必要 reset...
 }
 
 a:active,
@@ -79,31 +77,15 @@ a:hover {
     outline: 0;
 }
 
-// 移除 button、input、select、textarea 的全局 reset，避免影响 element-plus 组件
-// button,
-// input,
-// select,
-// textarea {
-//     margin: 0;
-//     font-size: inherit;
-// }
-
 button,
 html [type="button"],
 [type="reset"],
 [type="submit"] {
     border: 0;
-    // color: inherit; // 移除或注释掉这行
     -webkit-appearance: button;
     appearance: button;
     cursor: pointer;
 }
-
-// button::-moz-focus-inner,
-// input::-moz-focus-inner {
-//     border: 0;
-//     padding: 0;
-// }
 
 input {
     padding: 0;

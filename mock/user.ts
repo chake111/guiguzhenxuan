@@ -4,7 +4,7 @@ function createUserList() {
         {
             userId: 1,
             avatar:
-                'https://upload-bbs.miyoushe.com/upload/2024/09/28/4861577/6fddc4bc439549e39f50123938a65450_6966671800555289069.jpg?x-oss-process=image/resize,s_600/quality,q_80/auto-orient,0/interlace,1/format,jpg',
+                'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
             username: 'admin',
             password: '111111',
             desc: '平台管理员',
@@ -27,14 +27,12 @@ function createUserList() {
         },
     ]
 }
-//对外暴露一个数组:数组里面包含两个接口
-//登录假的接口
-//获取用户信息的假的接口
+
 export default [
     // 用户登录接口
     {
-        url: '/api/user/login',//请求地址
-        method: 'post',//请求方式
+        url: '/api/user/login',
+        method: 'post',
         response: ({ body }) => {
             //获取请求体携带过来的用户名与密码
             const { username, password } = body;
