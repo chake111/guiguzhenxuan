@@ -8,42 +8,40 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { viteMockServe } from 'vite-plugin-mock'
-export default defineConfig(({ command }) => {
-  return {
-    plugins: [
-      vue(),
-      AutoImport({
-        resolvers: [ElementPlusResolver()],
-      }),
-      Components({
-        resolvers: [ElementPlusResolver()],
-      }),
-      vueJsx(),
-      vueDevTools(),
-      viteMockServe({
-        mockPath: 'mock',
-        localEnabled: true,
-        prodEnabled: false,
-        injectCode: `
-          import { setupProdMockServer } from '../mock/_createProductionServer';
+export default defineConfig({
+  plugins: [
+    vue(),
+    AutoImport({
+      resolvers: [ElementPlusResolver()],
+    }),
+    Components({
+      resolvers: [ElementPlusResolver()],
+    }),
+    vueJsx(),
+    vueDevTools(),
+    viteMockServe({
+      mockPath: 'mock',
+      localEnabled: true,
+      prodEnabled: false,
+      injectCode: `
+          import { setupProdMockServer } from './mock/_createProductionServer';
           setupProdMockServer();
         `,
-        watchFiles: true,
-        supportTs: true,
-      })
-    ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url))
+      watchFiles: true,
+      supportTs: true,
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        javascriptEnabled: true,
+        additionalData: '@use "@/style/variable.scss" as *;',
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          javascriptEnabled: true,
-          additionalData: '@use "@/style/variable.scss" as *;',
-        },
-      },
-    },
-  }
+  },
 })

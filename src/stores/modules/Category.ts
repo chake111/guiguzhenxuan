@@ -1,17 +1,55 @@
-import { reqC1 } from "@/api/product/attr";
+import { reqC1, reqC2, reqC3 } from "@/api/product/attr";
 import type { CategoryResponseData, CategoryObj } from "@/api/product/attr/type";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 export const useCategoryStore = defineStore('Category', () => {
   let c1Arr = ref<CategoryObj[]>([]);
-  let c1Id = ref<number | string>('');
+  let c1Id = ref<number | null>(null);
+  let c2Arr = ref<CategoryObj[]>([]);
+  let c2Id = ref<number | null>(null);
+  let c3Arr = ref<CategoryObj[]>([]);
+  let c3Id = ref<number | null>(null);
+
   const getC1 = async () => {
-    c1Arr.value = []; // 清空旧数据，防止脏数据
-    c1Id.value = '';  // 重置选中项
     let result: CategoryResponseData = await reqC1();
+    console.log('getC1接口返回', result); // 打印接口返回
     if (result.code == 200) {
       c1Arr.value = result.data;
+      console.log('c1Arr.value赋值后', c1Arr.value); // 打印赋值后
     }
   }
-  return { c1Arr, c1Id, getC1 };
+
+  const getC2 = async () => {
+    if (!c1Id.value) {
+      c2Arr.value = [];
+      return;
+    }
+    let result: CategoryResponseData = await reqC2(Number(c1Id.value));
+    if (result.code == 200) {
+      c2Arr.value = result.data;
+    }
+  }
+
+  const getC3 = async () => {
+    if (!c2Id.value) {
+      c3Arr.value = [];
+      return;
+    }
+    let result: CategoryResponseData = await reqC3(Number(c2Id.value));
+    if (result.code == 200) {
+      c3Arr.value = result.data;
+    }
+  }
+
+  return {
+    c1Arr,
+    c1Id,
+    c2Arr,
+    c2Id,
+    c3Arr,
+    c3Id,
+    getC1,
+    getC2,
+    getC3
+  };
 })

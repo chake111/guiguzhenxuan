@@ -8,6 +8,10 @@ export interface UserState {
 }
 
 export interface CategoryState {
-  c1Id: number | string,
-  c1Arr: CategoryObj[]
+  c1Id: number | null,
+  c1Arr: CategoryObj[],
+  c2Id: number | null,
+  c2Arr: CategoryObj[],
+  c3Id: number | null,
+  c3Arr: CategoryObj[]
 }

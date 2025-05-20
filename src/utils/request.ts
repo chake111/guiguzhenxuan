@@ -4,14 +4,14 @@ import { useUserStore } from "@/stores/user";
 
 
 let request = axios.create({
-    baseURL: import.meta.env.VITE_APP_BASE_API,
+    baseURL: import.meta.env.VITE_APP_BASE_API, // 始终读取环境变量
     timeout: 5000,
 })
 request.interceptors.request.use(
     (config) => {
         let userStore = useUserStore();
-        if(userStore.token){
-            config.headers.token=userStore.token;
+        if (userStore.token) {
+            config.headers.token = userStore.token;
         }
         return config;
     }
