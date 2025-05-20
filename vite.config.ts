@@ -22,10 +22,10 @@ export default defineConfig(({ command }) => {
       vueDevTools(),
       viteMockServe({
         mockPath: 'mock',
-        localEnabled: command === 'serve',
+        localEnabled: true,
         prodEnabled: false,
         injectCode: `
-          import { setupProdMockServer } from './mock/_createProductionServer';
+          import { setupProdMockServer } from '../mock/_createProductionServer';
           setupProdMockServer();
         `,
         watchFiles: true,

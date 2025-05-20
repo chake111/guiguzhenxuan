@@ -23,6 +23,10 @@
           </el-select>
         </el-form-item>
       </el-form>
+      <div style="color: #888; font-size: 12px;">
+        <!-- 调试输出 -->
+        一级分类数据: {{ categoryStore.c1Arr }}
+      </div>
     </el-card>
   </div>
 </template>
@@ -31,11 +35,8 @@
 import { useCategoryStore } from '@/stores/modules/Category';
 import { onMounted } from 'vue';
 let categoryStore = useCategoryStore();
-const getC1 = () => {
-  categoryStore.getC1();
-}
 onMounted(() => {
-  getC1();
+  categoryStore.getC1();
 })
 </script>
 

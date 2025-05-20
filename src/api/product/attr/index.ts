@@ -2,9 +2,9 @@ import request from "@/utils/request";
 import type { CategoryResponseData } from "./type";
 
 enum API {
-  C1_URL = 'admin/product/getCategory1/',
-  C2_URL = 'admin/product/getCategory2/',
-  C3_URL = 'admin/product/getCategory3/',
+  C1_URL = '/admin/product/getCategory1/',
+  C2_URL = '/admin/product/getCategory2/',
+  C3_URL = '/admin/product/getCategory3/',
 }
 
 export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL);
