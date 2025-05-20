@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { defineStore } from "pinia";
 import type { loginForm, loginResponseData } from "@/api/user/type";
 import { reqLogin, reqUserInfo } from "@/api/user";

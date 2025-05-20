@@ -12,10 +12,8 @@ export const useCategoryStore = defineStore('Category', () => {
 
   const getC1 = async () => {
     let result: CategoryResponseData = await reqC1();
-    console.log('getC1接口返回', result); // 打印接口返回
     if (result.code == 200) {
       c1Arr.value = result.data;
-      console.log('c1Arr.value赋值后', c1Arr.value); // 打印赋值后
     }
   }
 

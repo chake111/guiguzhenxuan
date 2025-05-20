@@ -48,7 +48,6 @@ export default [
     url: '/admin/product/getCategory1',
     method: 'get',
     response: () => {
-      console.log('mock getCategory1 called');
       return {
         code: 200,
         data: c1Arr

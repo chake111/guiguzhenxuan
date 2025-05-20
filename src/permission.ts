@@ -7,7 +7,7 @@ import { useUserStore } from "./stores/user";
 import pinia from "./stores";
 let userStore = useUserStore(pinia);
 router.beforeEach(async (to, from, next) => {
-    document.title = `${setting.title} - ${to.meta.title}` 
+    document.title = `${setting.title} - ${to.meta.title}`
     nprogress.start();
     let token = userStore.token;
     let username = userStore.username;
@@ -22,6 +22,7 @@ router.beforeEach(async (to, from, next) => {
                     await userStore.userInfo();
                     next();
                 } catch (error) {
+                    console.error('Failed to fetch user info:', error);
                     userStore.userLogout();
                     next({ path: '/login', query: { redirect: to.path } });
                 }
