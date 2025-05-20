@@ -1,57 +1,50 @@
 <template>
-    <div>
-        <el-card class="box-card">
-            <el-button type="primary" size="default" icon="Plus" @click="addTrademark">添加品牌</el-button>
-            <el-table style="margin:10px 0px" border :data="trademarkArr">
-                <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
-                <el-table-column label="品牌名称">
-                    <template #default="{ row }">
-                        <pre>{{ row.tmName }}</pre>
-                    </template>
-                </el-table-column>
-                <el-table-column label="品牌LOGO">
-                    <template #default="{ row }">
-                        <img :src="row.logoUrl" alt="" style="width: 100px;height: 100px;">
-                    </template>
-                </el-table-column>
-                <el-table-column label="品牌操作">
-                    <template #default="{ row }">
-                      <el-button-group>
-                        <el-button type="primary" size="small" icon="Edit" @click="() => updataTrademark(row)"></el-button>
-                        <el-popconfirm :title="`你确定要删除${row.tmName}吗?`" width="250px" icon="Delete" @confirm="() => removeTradeMark(row.id)">
-                            <template #reference>
-                                <el-button type="primary" size="small" icon="Delete"></el-button>
-                            </template>
-                        </el-popconfirm>
-                      </el-button-group>
-
-                    </template>
-                </el-table-column>
-            </el-table>
-            <el-pagination
-                @current-change="changePageNo"
-                @size-change="sizeChange"
-                :pager-count="9"
-                v-model:current-page="pageNo"
-                v-model:page-size="limit"
-                :page-sizes="[3, 5, 7, 9]"
-                :background="true"
-                layout="prev, pager, next, jumper,->,sizes,total"
-                :total="total"
-            />
-        </el-card>
-        <el-dialog v-model="dialogFormVisible" :title="trademarkParams.id ? '修改品牌' : '添加品牌'">
-            <el-form style="width: 80%;" :model="trademarkParams" :rules="rules" ref="formRef">
-                <el-form-item label="品牌名称" label-width="100px" prop="tmName">
-                    <el-input placeholder="请输入品牌名称" v-model="trademarkParams.tmName"></el-input>
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <el-button type="primary" size="default" @click="cancel">取消</el-button>
-                <el-button type="primary" size="default" @click="confirm">确定</el-button>
-            </template>
-        </el-dialog>
-    </div>
+  <div>
+    <el-card class="box-card">
+      <el-button type="primary" size="default" icon="Plus" @click="addTrademark">添加品牌</el-button>
+      <el-table style="margin:10px 0px" border :data="trademarkArr">
+        <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
+        <el-table-column label="品牌名称">
+          <template #default="{ row }">
+            <pre>{{ row.tmName }}</pre>
+          </template>
+        </el-table-column>
+        <el-table-column label="品牌LOGO">
+          <template #default="{ row }">
+            <el-image style="width: 100px; height: 100px" :src="row.logoUrl" :zoom-rate="1.2" :max-scale="7"
+              :min-scale="0.2" show-progress :initial-index="4" fit="cover" />
+          </template>
+        </el-table-column>
+        <el-table-column label="品牌操作">
+          <template #default="{ row }">
+            <el-button-group>
+              <el-button type="primary" size="small" icon="Edit" @click="updataTrademark(row)"></el-button>
+              <el-popconfirm :title="`你确定要删除${row.tmName}吗?`" width="250px" icon="Delete"
+                @confirm="() => removeTradeMark(row.id)">
+                <template #reference>
+                  <el-button type="primary" size="small" icon="Delete"></el-button>
+                </template>
+              </el-popconfirm>
+            </el-button-group>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination @current-change="changePageNo" @size-change="sizeChange" :pager-count="9"
+        v-model:current-page="pageNo" v-model:page-size="limit" :page-sizes="[3, 5, 7, 9]" :background="true"
+        layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
+    </el-card>
+    <el-dialog v-model="dialogFormVisible" :title="trademarkParams.id ? '修改品牌' : '添加品牌'">
+      <el-form style="width: 80%;" :model="trademarkParams" :rules="rules" ref="formRef">
+        <el-form-item label="品牌名称" label-width="100px" prop="tmName">
+          <el-input placeholder="请输入品牌名称" v-model="trademarkParams.tmName"></el-input>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button type="primary" size="default" @click="cancel">取消</el-button>
+        <el-button type="primary" size="default" @click="confirm">确定</el-button>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang='ts'>
@@ -66,94 +59,96 @@ let dialogFormVisible = ref<boolean>(false);
 let formRef = ref();
 let trademarkArr = ref<Records>([])
 let trademarkParams = reactive<Trademark>({
-    tmName: '',
-    logoUrl: ''
+  tmName: '',
+  logoUrl: ''
 })
 const getHasTradeMark = async (pager = 1) => {
-    pageNo.value = pager;
-    let result: TrademarkResponseData = await reqHasTradeMark(pageNo.value, limit.value);
-    if (result.code == 200) {
-        total.value = result.data.total;
-        trademarkArr.value = result.data.records;
-    }
+  pageNo.value = pager;
+  let result: TrademarkResponseData = await reqHasTradeMark(pageNo.value, limit.value);
+  if (result.code == 200) {
+    total.value = result.data.total;
+    trademarkArr.value = result.data.records;
+  }
 }
-onMounted(()=>{
-    getHasTradeMark();
+onMounted(() => {
+  getHasTradeMark();
 })
 const changePageNo = (newPage: number) => {
-    pageNo.value = newPage;
-    getHasTradeMark(pageNo.value);
+  pageNo.value = newPage;
+  getHasTradeMark(pageNo.value);
 }
 const sizeChange = (newSize: number) => {
-    limit.value = newSize;
-    getHasTradeMark(pageNo.value);
+  limit.value = newSize;
+  getHasTradeMark(pageNo.value);
 }
 const addTrademark = () => {
-    dialogFormVisible.value = true;
-    trademarkParams.id = 0;
-    trademarkParams.tmName = '';
-    nextTick(() => {
-        formRef.value.clearValidate('tmName');
-    })
+  dialogFormVisible.value = true;
+  trademarkParams.id = 0;
+  trademarkParams.tmName = '';
+  nextTick(() => {
+    formRef.value.clearValidate('tmName');
+  })
 }
 const updataTrademark = (row: Trademark) => {
-    dialogFormVisible.value = true;
-    Object.assign(trademarkParams, row);
+  dialogFormVisible.value = true;
+  Object.assign(trademarkParams, row);
 }
 const cancel = () => {
-    dialogFormVisible.value = false;
+  dialogFormVisible.value = false;
 }
 const confirm = async () => {
-    await formRef.value.validate();
-    let result: any = await reqAddOrUpdateTradeMark(trademarkParams);
-    if (result.code == 200) {
-        dialogFormVisible.value = false;
-        ElMessage.success(trademarkParams.id ? '修改成功' : '添加成功');
-        getHasTradeMark(pageNo.value);
-    } else {
-        ElMessage.error(trademarkParams.id ? '修改失败' : '添加失败');
-    }
+  await formRef.value.validate();
+  let result: any = await reqAddOrUpdateTradeMark(trademarkParams);
+  if (result.code == 200) {
     dialogFormVisible.value = false;
+    ElMessage.success(trademarkParams.id ? '修改成功' : '添加成功');
+    getHasTradeMark(pageNo.value);
+  } else {
+    ElMessage.error(trademarkParams.id ? '修改失败' : '添加失败');
+  }
+  dialogFormVisible.value = false;
 }
 const validatorTmName = (rule: any, value: any, callBack: any) => {
-    if (value.trim().length >= 2) {
-        callBack();
-    } else {
-        callBack(new Error('品牌名称字数大于等于两位'))
-    }
+  if (value.trim().length >= 2) {
+    callBack();
+  } else {
+    callBack(new Error('品牌名称字数大于等于两位'))
+  }
 }
 const rules = {
-    tmName: [
-        { required: true, trigger: 'blur', validator: validatorTmName }
-    ]
+  tmName: [
+    { required: true, trigger: 'blur', validator: validatorTmName }
+  ]
 }
 const removeTradeMark = async (id: number) => {
-    let result = await reqDeleteTradeMark(id);
-    if (result.code == 200) {
-        ElMessage.success("删除成功")
-        getHasTradeMark(trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
-    } else {
-        ElMessage.error("删除失败")
-    }
+  let result = await reqDeleteTradeMark(id);
+  if (result.code == 200) {
+    ElMessage.success("删除成功")
+    getHasTradeMark(trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
+  } else {
+    ElMessage.error("删除失败")
+  }
 }
 </script>
 <style>
 .avatar-uploader .el-upload {
-    border: 1px dashed var(--el-border-color);
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: var(--el-transition-duration-fast);
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
 }
+
 .avatar-uploader .el-upload:hover {
-    border-color: var(--el-color-primary);
+  border-color: var(--el-color-primary);
 }
+
 .el-icon.avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    text-align: center;
+  font-size: 28px;
+  color: #8c939d;
+  width: 178px;
+  height: 178px;
+  text-align: center;
 }
 </style>
