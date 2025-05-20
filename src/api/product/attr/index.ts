@@ -1,8 +1,6 @@
 import request from "@/utils/request";
 import type { CategoryResponseData } from "./type";
 
-// 不要写死 /api 或空字符串，全部走 request 实例，request 实例的 baseURL 已自动读取 VITE_APP_BASE_API
-
 enum API {
   C1_URL = '/admin/product/getCategory1',
   C2_URL = '/admin/product/getCategory2/',
