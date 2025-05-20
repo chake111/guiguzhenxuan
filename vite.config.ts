@@ -8,8 +8,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { viteMockServe } from 'vite-plugin-mock'
-import path from 'node:path'
-// https://vite.dev/config/
 export default defineConfig(({ command }) => {
   return {
     plugins: [
