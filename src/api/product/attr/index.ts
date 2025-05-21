@@ -5,6 +5,7 @@ enum API {
   C1_URL = '/admin/product/getCategory1',
   C2_URL = '/admin/product/getCategory2/',
   C3_URL = '/admin/product/getCategory3/',
+  ATTR_URL = '/admin/product/attrInfoList/',
 }
 
 export const reqC1 = () => request.get<any, CategoryResponseData>(API.C1_URL);
