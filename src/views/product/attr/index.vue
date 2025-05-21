@@ -5,13 +5,13 @@
       <el-button type="primary" size="default" icon="Plus" :disabled="categoryStore.c3Id ? false : true">添加平台属性</el-button>
       <el-table border style="margin: 10px 0px;" :data="attrArr">
         <el-table-column label="序号" type="index" align="center" width="80px"></el-table-column>
-        <el-table-column label="属性名称" width="120px" prop="attName"></el-table-column>
+        <el-table-column label="属性名称" width="120px" prop="attrName"></el-table-column>
         <el-table-column label="属性值名称">
           <template #="{row,$index}">
             <el-tag style="margin: 5px;" v-for="(item,index) in row.attrValueList" :key="item.id">{{ item.valueName }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="120px">
+        <el-table-column label="操作" width="200px">
           <template #="{row,$index}">
             <el-button type="primary" size="small" icon="Edit">编辑</el-button>
             <el-button type="primary" size="small" icon="Delete">删除</el-button>
