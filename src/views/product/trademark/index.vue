@@ -38,7 +38,7 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button type="primary" size="default" @click="cancel">取消</el-button>
+        <el-button type="default" size="default" @click="cancel">取消</el-button>
         <el-button type="primary" size="default" @click="confirm">确定</el-button>
       </template>
     </el-dialog>
