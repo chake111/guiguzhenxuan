@@ -19,17 +19,18 @@ export interface CategoryResponseData extends ResponseData {
 }
 
 export interface AttrValue {
-  id: number | string,
+  id?: number | string,
   valueName: string,
-  attrId: number | string,
+  attrId?: number | string,
+  flag?: boolean,
 }
 
 export type AttrValueList = AttrValue[];
 
 export interface Attr {
-  id: number | string,
+  id?: number | string,
   attrName: string,
-  categoryId: number,
+  categoryId?: number | string,
   categoryLevel: number,
   attrValueList: AttrValueList,
 }

@@ -275,5 +275,46 @@ export default [
         data: attrArr[c3Id] || []
       }
     }
+  },
+  {
+    url: '/admin/product/saveAttrInfo/',
+    method: 'post',
+    response: ({ body }: any) => {
+      const { attrName, categoryId, categoryLevel, attrValueList, id } = body;
+      if (!id) {
+        const c3Id = categoryId;
+        const newId = Date.now();
+        const newAttr = {
+          id: newId,
+          attrName,
+          categoryId,
+          categoryLevel,
+          attrValueList: attrValueList.map((item: any, idx: number) => ({
+            id: newId * 100 + idx,
+            valueName: item.valueName,
+            attrId: newId
+          }))
+        };
+        if (!attrArr[c3Id]) attrArr[c3Id] = [];
+        attrArr[c3Id].push(newAttr);
+        return { code: 200, data: null, message: '添加成功', ok: true };
+      }
+      for (const key in attrArr) {
+        const idx = attrArr[key].findIndex((item: any) => item.id === id);
+        if (idx !== -1) {
+          attrArr[key][idx] = {
+            ...attrArr[key][idx],
+            attrName,
+            attrValueList: attrValueList.map((item: any, idx2: number) => ({
+              id: item.id || (id * 100 + idx2),
+              valueName: item.valueName,
+              attrId: id
+            }))
+          };
+          return { code: 200, data: null, message: '修改成功', ok: true };
+        }
+      }
+      return { code: 500, data: null, message: '未找到属性', ok: false };
+    }
   }
 ] as MockMethod[];
