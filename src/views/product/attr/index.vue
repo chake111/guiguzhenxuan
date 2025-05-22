@@ -11,7 +11,7 @@
           <el-table-column label="属性值名称">
             <template #="{ row, $index }">
               <el-tag style="margin: 5px;" v-for="(item, index) in row.attrValueList" :key="item.id">{{ item.valueName
-              }}</el-tag>
+                }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200px">
@@ -125,8 +125,7 @@ const save = async () => {
 const toLook = (row: AttrValue, $index: number) => {
   if (row.valueName.trim() == '') {
     attrParams.attrValueList.splice($index, 1);
-      flag.value = false;
-
+    flag.value = false;
     ElMessage.error('属性值不能为空');
     return;
   }
