@@ -46,7 +46,6 @@ export default [
       if (!logoUrl || !logoUrl.trim()) {
         return { code: 400, data: { message: '品牌LOGO不能为空' } };
       }
-      // 允许 logoUrl 为 base64 或网络图片
       const idx = trademarkList.findIndex(item => item.id === id);
       if (idx > -1) {
         trademarkList[idx] = { id, tmName, logoUrl };
