@@ -316,5 +316,26 @@ export default [
       }
       return { code: 500, data: null, message: '未找到属性', ok: false };
     }
+  },
+  {
+    url: /\/admin\/product\/deleteAttr\/\d+/,
+    method: 'delete',
+    response: ({ url }: any) => {
+      const attrId = Number(url.split('/').pop());
+      let found = false;
+      for (const key in attrArr) {
+        const idx = attrArr[key].findIndex((item: any) => item.id === attrId);
+        if (idx !== -1) {
+          attrArr[key].splice(idx, 1);
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        return { code: 200, data: null, message: '删除成功', ok: true };
+      } else {
+        return { code: 404, data: null, message: '未找到属性', ok: false };
+      }
+    }
   }
 ] as MockMethod[];

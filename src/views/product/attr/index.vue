@@ -16,8 +16,8 @@
           </el-table-column>
           <el-table-column label="操作" width="200px">
             <template #="{ row, $index }">
-              <el-button @click="updateAttr" type="primary" size="small" icon="Edit">编辑</el-button>
-              <el-button type="primary" size="small" icon="Delete">删除</el-button>
+              <el-button @click="updateAttr(row)" type="primary" size="small" icon="Edit">编辑</el-button>
+              <el-button @click="deleteAttr(row.id)" type="primary" size="small" icon="Delete">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -56,11 +56,11 @@
 </template>
 
 <script setup lang='ts'>
-import { reqAddOrUpdateAttr, reqAttr } from '@/api/product/attr';
+import { reqAddOrUpdateAttr, reqAttr, reqRemoveAttr } from '@/api/product/attr';
 import Category from '@/components/Category/index.vue'
 import { useCategoryStore } from '@/stores/modules/Category';
 import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type';
-import { reactive, ref, watch, nextTick } from 'vue';
+import { reactive, ref, watch, nextTick, onActivated, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 let categoryStore = useCategoryStore();
 let attrArr = ref<Attr[]>([]);
@@ -160,6 +160,7 @@ const save = async () => {
     ElMessage.error(attrParams.id ? '修改失败' : '添加失败');
   }
 }
+
 const toLook = (row: AttrValue, $index: number) => {
   if (row.valueName.trim() == '') {
     attrParams.attrValueList.splice($index, 1);
@@ -167,23 +168,38 @@ const toLook = (row: AttrValue, $index: number) => {
   }
   if (removeDuplicateValueNames(attrParams.attrValueList)) {
     ElMessage.error('属性值不能重复，已自动删除');
-    row.flag = false;
-    return;
   }
   row.flag = false;
 }
+
 const toEdit = (row: AttrValue, $index: number) => {
   row.flag = true;
   nextTick(() => {
     inputRefs.value[$index]?.focus();
   });
 }
+
 const setInputRef = (index: number) => (el: any) => {
   if (el) inputRefs.value[index] = el;
-};
+}
+
 const deleteAttrValue = (row: AttrValue, $index: number) => {
   attrParams.attrValueList.splice($index, 1);
 }
+
+const deleteAttr = async (attrId: number) => {
+  let result: any = await reqRemoveAttr(attrId);
+  if (result.code == 200) {
+    ElMessage.success('删除成功')
+    getAttr();
+  } else {
+    ElMessage.error('删除失败')
+  }
+}
+onMounted(() => {
+  if (!categoryStore.c3Id) return;
+  getAttr();
+})
 </script>
 
 <style lang="scss" scoped></style>
