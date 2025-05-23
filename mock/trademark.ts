@@ -23,13 +23,14 @@ export default [
     url: '/admin/product/baseTrademark/save',
     method: 'post',
     response: ({ body }) => {
-      const { tmName } = body;
+      const { tmName, logoUrl } = body;
       if (!tmName || !tmName.trim()) {
         return { code: 400, data: { message: '品牌名称不能为空' } };
       }
-      const logoUrl = `https://picsum.photos/seed/trademark${Math.floor(Math.random() * 100000)}/100/100`;
+      let finalLogoUrl = logoUrl && logoUrl.startsWith('data:image') ? logoUrl
+        : `https://picsum.photos/seed/trademark${Math.floor(Math.random() * 100000)}/100/100`;
       const id = trademarkList.length ? trademarkList[trademarkList.length - 1].id + 1 : 1;
-      const newTrademark = { id, tmName, logoUrl };
+      const newTrademark = { id, tmName, logoUrl: finalLogoUrl };
       trademarkList.push(newTrademark);
       return { code: 200, data: newTrademark };
     }
@@ -45,6 +46,7 @@ export default [
       if (!logoUrl || !logoUrl.trim()) {
         return { code: 400, data: { message: '品牌LOGO不能为空' } };
       }
+      // 允许 logoUrl 为 base64 或网络图片
       const idx = trademarkList.findIndex(item => item.id === id);
       if (idx > -1) {
         trademarkList[idx] = { id, tmName, logoUrl };
