@@ -122,7 +122,6 @@ const confirm = async () => {
   dialogFormVisible.value = false;
 }
 
-// 图片上传前校验
 const beforeLogoUpload = (file: File) => {
   const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
   const isLt2M = file.size / 1024 / 1024 < 2;
@@ -137,9 +136,7 @@ const beforeLogoUpload = (file: File) => {
   return true;
 }
 
-// 处理图片上传
 const handleLogoChange = (uploadFile: any) => {
-  // 读取本地图片并转为 base64 预览
   const reader = new FileReader();
   reader.onload = (e: any) => {
     trademarkParams.logoUrl = e.target.result;

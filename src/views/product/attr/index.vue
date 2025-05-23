@@ -11,13 +11,18 @@
           <el-table-column label="属性值名称">
             <template #="{ row, $index }">
               <el-tag style="margin: 5px;" v-for="(item, index) in row.attrValueList" :key="item.id">{{ item.valueName
-                }}</el-tag>
+              }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200px">
             <template #="{ row, $index }">
               <el-button @click="updateAttr(row)" type="primary" size="small" icon="Edit">编辑</el-button>
-              <el-button @click="deleteAttr(row.id)" type="primary" size="small" icon="Delete">删除</el-button>
+              <el-popconfirm :title="`你确定要删除${row.attrName}吗?`" width="250px" icon="Delete"
+                @confirm="deleteAttr(row.id)">
+                <template #reference>
+                  <el-button type="primary" size="small" icon="Delete">删除</el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -60,7 +65,7 @@ import { reqAddOrUpdateAttr, reqAttr, reqRemoveAttr } from '@/api/product/attr';
 import Category from '@/components/Category/index.vue'
 import { useCategoryStore } from '@/stores/modules/Category';
 import type { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type';
-import { reactive, ref, watch, nextTick, onActivated, onMounted } from 'vue';
+import { reactive, ref, watch, nextTick, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 let categoryStore = useCategoryStore();
 let attrArr = ref<Attr[]>([]);
