@@ -4,7 +4,7 @@
       <el-form :inline="true">
         <el-form-item label="一级分类">
           <el-select placeholder="请选择" style="width: 240px" v-model="c1Id" @change="handleC1Change"
-            :disabled="scene">
+            :disabled="scene == false ? false : true">
             <el-option v-for="(c1, index) in c1Arr" :key="c1.id" :label="c1.name" :value="c1.id"></el-option>
           </el-select>
         </el-form-item>
@@ -32,14 +32,11 @@ let categoryStore = useCategoryStore();
 const { c1Id, c2Id, c3Id, c1Arr, c2Arr, c3Arr } = toRefs(categoryStore);
 
 const handleC1Change = async () => {
-  c2Id.value = null;
-  c3Id.value = null;
   c3Arr.value = [];
   await categoryStore.getC2();
 }
 
 const handleC2Change = async () => {
-  c3Id.value = null;
   await categoryStore.getC3();
 }
 

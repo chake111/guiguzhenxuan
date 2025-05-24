@@ -40,9 +40,11 @@ watch(() => categoryStore.c3Id, () => {
   getHasSpu();
 })
 const getHasSpu = async (pager=1) => {
+
   pageNo.value = pager;
   let result: HasSpuResponseData = await reqHasSpu(pageNo.value, limit.value, categoryStore.c3Id);
   if (result.code==200) {
+    console.log(1);
     records.value=result.data.records;
     total.value=result.data.total;
   }

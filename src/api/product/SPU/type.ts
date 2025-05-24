@@ -2,7 +2,7 @@ import type { ResponseData } from "../trademark/type";
 
 export interface SpuData{
   id?:number,
-  supName:string,
+  spuName:string,
   description:string,
   category3Id:string|number,
   tmId:number,
