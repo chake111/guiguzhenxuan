@@ -11,8 +11,9 @@
         </el-table-column>
         <el-table-column label="品牌LOGO">
           <template #default="{ row }">
-            <el-image style="width: 100px; height: 100px" :src="row.logoUrl" :zoom-rate="1.2" :max-scale="7"
-              :min-scale="0.2" show-progress :initial-index="4" fit="cover" />
+            <el-image style="max-width: 100px; max-height: 100px; width: auto; height: auto; display: block;"
+              :src="row.logoUrl" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" show-progress :initial-index="4"
+              fit="contain" />
           </template>
         </el-table-column>
         <el-table-column label="品牌操作">
@@ -40,7 +41,7 @@
           <el-upload class="avatar-uploader" action="" :show-file-list="false" :before-upload="beforeLogoUpload"
             :on-change="handleLogoChange">
             <img v-if="trademarkParams.logoUrl" :src="trademarkParams.logoUrl" class="avatar"
-              style="width:100px;height:100px;" />
+              style="max-width:100px; max-height:100px; width:auto; height:auto; display:block;" />
             <el-icon v-else class="avatar-uploader-icon">
               <Plus />
             </el-icon>

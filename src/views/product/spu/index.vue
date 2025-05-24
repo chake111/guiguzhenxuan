@@ -28,7 +28,7 @@ import type { HasSpuResponseData, Records } from "@/api/product/SPU/type";
 import { reqHasSpu } from "@/api/product/SPU/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 let pageNo = ref<number>(1);
 let limit = ref<number>(3);
 let scene = ref<boolean>(false);
@@ -54,6 +54,14 @@ const getHasSpu = async (pager = 1) => {
 const sizeChange = () => {
   getHasSpu();
 }
+
+onMounted(()=>{
+    if (!categoryStore.c3Id) {
+    records.value = [];
+    return;
+  };
+  getHasSpu();
+})
 </script>
 
 <style lang="scss" scoped></style>
