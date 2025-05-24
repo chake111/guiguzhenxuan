@@ -1,4 +1,8 @@
-import type { ResponseData } from "../trademark/type";
+export interface ResponseData {
+    code: number,
+    message: string,
+    ok: boolean,
+}
 
 export interface SpuData{
   id?:number,
