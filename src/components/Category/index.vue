@@ -4,7 +4,7 @@
       <el-form :inline="true">
         <el-form-item label="一级分类">
           <el-select placeholder="请选择" style="width: 240px" v-model="c1Id" @change="handleC1Change"
-            :disabled="scene == 0 ? false : true">
+            :disabled="scene">
             <el-option v-for="(c1, index) in c1Arr" :key="c1.id" :label="c1.name" :value="c1.id"></el-option>
           </el-select>
         </el-form-item>
