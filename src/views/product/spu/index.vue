@@ -76,11 +76,12 @@ onMounted(() => {
 
 const addSpu = () => {
   scene.value = 1;
+  spu.value.initHasSpuData(); // 新增时不传参数
 }
 
 const updateSpu = (row: SpuData) => {
   scene.value = 1;
-  spu.value.initHasSpuData();
+  spu.value.initHasSpuData(row); // 编辑时传递row
 }
 
 const changeScene = (num: number) => {

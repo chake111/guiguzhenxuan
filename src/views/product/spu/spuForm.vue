@@ -39,7 +39,7 @@ import type { Trademark } from '@/api/product/trademark/type';
 import { ref } from 'vue';
 
 let $emit = defineEmits(['changeScene']);
-let AllTradeMark =ref<Trademark[]>();
+let AllTradeMark = ref<Trademark[]>();
 let imgList = ref<SpuImag[]>()
 let saleAttr = ref<SaleAttr[]>()
 let allSaleAttr = ref<HasSaleAttr[]>()
@@ -48,18 +48,23 @@ const cancel = () => {
   $emit('changeScene', 0);
 }
 
-const initHasSpuData = async (spu: SpuData) => {
+const initHasSpuData = async (spu?: SpuData) => {
   let result: AllTradeMark = await reqAllTradeMark();
-  let result1: SpuHasImg = await reqSpuImageList((spu.id as number));
-  let result2: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
   let result3: HasSaleAttrResponseData = await reqAllSaleAttr();
   AllTradeMark.value = result.data;
-  imgList.value = result1.data;
-  saleAttr.value = result2.data;
   allSaleAttr.value = result3.data;
+  if (spu && spu.id) {
+    let result1: SpuHasImg = await reqSpuImageList((spu.id as number));
+    let result2: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
+    imgList.value = result1.data;
+    saleAttr.value = result2.data;
+  } else {
+    imgList.value = [];
+    saleAttr.value = [];
+  }
 }
 
-defineExpose(['initHasSpuData'])
+defineExpose({ initHasSpuData })
 </script>
 
 <style></style>

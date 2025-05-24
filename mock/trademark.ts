@@ -54,6 +54,7 @@ let trademarkList = [
 // 个护健康品牌与分类对应：飞科、松下、博朗（剃须刀/电吹风），欧乐B、小熊（电动牙刷/小家电）
 
 export default [
+  // 分页获取品牌
   {
     url: /\/admin\/product\/baseTrademark\/\d+\/\d+/,
     method: 'get',
@@ -68,6 +69,7 @@ export default [
       return { code: 200, data: { total, records } }
     }
   },
+  // 新增品牌
   {
     url: '/admin/product/baseTrademark/save',
     method: 'post',
@@ -84,6 +86,7 @@ export default [
       return { code: 200, data: newTrademark };
     }
   },
+  // 更新品牌
   {
     url: '/admin/product/baseTrademark/update',
     method: 'put',
@@ -103,6 +106,7 @@ export default [
       return { code: 404, data: { message: '品牌不存在' } };
     }
   },
+  // 删除品牌
   {
     url: /\/admin\/product\/baseTrademark\/remove\/\d+$/,
     method: 'delete',
@@ -114,6 +118,17 @@ export default [
         return { code: 200, data: { id } };
       }
       return { code: 404, data: { message: '品牌不存在' } };
+    }
+  },
+  // 获取全部品牌
+  {
+    url: '/admin/product/getTrademarkList',
+    method: 'get',
+    response: () => {
+      return {
+        code: 200,
+        data: trademarkList
+      }
     }
   }
 ]
