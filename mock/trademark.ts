@@ -47,11 +47,6 @@ let trademarkList = [
   { id: 72, tmName: '博朗', logoUrl: 'https://logo.clearbit.com/braun.com' },
   { id: 73, tmName: '欧乐B', logoUrl: 'https://logo.clearbit.com/oralb.com' },
   { id: 74, tmName: '小熊', logoUrl: 'https://logo.clearbit.com/bear.com.cn' },
-  // 家居家装
-  { id: 50, tmName: '全友家居', logoUrl: 'https://logo.clearbit.com/quanyou.com.cn' },
-  { id: 51, tmName: '顾家家居', logoUrl: 'https://logo.clearbit.com/kukahome.com' },
-  { id: 52, tmName: '慕思', logoUrl: 'https://logo.clearbit.com/derucci.com' },
-  { id: 53, tmName: '雷士照明', logoUrl: 'https://logo.clearbit.com/nvc-lighting.com.cn' }
 ];
 
 // 家居家装品牌与分类对应：全友家居、顾家家居、慕思（家具/床），雷士照明、欧普照明（灯具）

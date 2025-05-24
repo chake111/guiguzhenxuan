@@ -11,7 +11,7 @@
           <el-table-column label="操作">
             <template #="{ row, $index }">
               <el-button type="primary" icon="Plus" size="small" title="添加SPU"></el-button>
-              <el-button @click="updateScene" type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
+              <el-button @click="updateSpu(row)" type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
               <el-button type="info" icon="InfoFilled" size="small" title="查看SPU列表"></el-button>
               <el-button type="danger" icon="Delete" size="small" title="删除SPU"></el-button>
             </template>
@@ -21,15 +21,15 @@
           v-model:current-page="pageNo" v-model:page-size="limit" :page-sizes="[3, 5, 7, 9]" :background="true"
           layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
       </div>
-      <SpuForm @changeScene="changeScene" v-show="scene == 1 ? true : false"></SpuForm>
+      <SpuForm ref="spu" @changeScene="changeScene" v-show="scene == 1 ? true : false"></SpuForm>
       <SkuForm v-show="scene == 2 ? true : false"></SkuForm>
     </el-card>
   </div>
 </template>
 
 <script setup lang='ts'>
-import type { HasSpuResponseData, Records } from "@/api/product/SPU/type";
-import { reqHasSpu } from "@/api/product/SPU/index";
+import type { HasSpuResponseData, Records, SpuData } from "@/api/product/spu/type";
+import { reqHasSpu } from "@/api/product/spu/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
 import { onMounted, ref, watch } from "vue";
@@ -42,6 +42,7 @@ let scene = ref<number>(0);
 let total = ref<number>(2);
 let categoryStore = useCategoryStore();
 let records = ref<Records>([]);
+let spu = ref<any>();
 
 watch(() => categoryStore.c3Id, () => {
   if (!categoryStore.c3Id) {
@@ -77,8 +78,9 @@ const addSpu = () => {
   scene.value = 1;
 }
 
-const updateScene = (num: number) => {
+const updateSpu = (row: SpuData) => {
   scene.value = 1;
+  spu.value.initHasSpuData();
 }
 
 const changeScene = (num: number) => {
