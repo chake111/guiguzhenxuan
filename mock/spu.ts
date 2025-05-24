@@ -1685,6 +1685,77 @@ const spuArr = [
   // 品牌id与trademark.ts严格对应
 ];
 
+// 补充spuImages和spuSaleAttrs数据，确保每个spuArr中的id都能获取到图片和销售属性
+let spuImages: Record<number, any[]> = {};
+let spuSaleAttrs: Record<number, any[]> = {};
+
+spuArr.forEach(item => {
+  // 图片数据
+  spuImages[item.id] = [
+    {
+      id: item.id * 10 + 1,
+      createTime: '',
+      updateTime: '',
+      spuId: item.id,
+      imgName: `${item.spuName}主图`,
+      imgUrl: `https://picsum.photos/seed/${item.id}a/200/200`
+    },
+    {
+      id: item.id * 10 + 2,
+      createTime: '',
+      updateTime: '',
+      spuId: item.id,
+      imgName: `${item.spuName}细节`,
+      imgUrl: `https://picsum.photos/seed/${item.id}b/200/200`
+    }
+  ];
+  // 销售属性数据
+  spuSaleAttrs[item.id] = [
+    {
+      id: 1,
+      createTime: null,
+      updateTime: null,
+      spuId: item.id,
+      saleAttrName: '颜色',
+      saleAttrValueName: '',
+      spuSaleAttrValueList: [
+        { id: 1, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '黑色', saleAttrName: '颜色', isChecked: null },
+        { id: 2, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '白色', saleAttrName: '颜色', isChecked: null }
+      ]
+    },
+    {
+      id: 2,
+      createTime: null,
+      updateTime: null,
+      spuId: item.id,
+      saleAttrName: '尺寸',
+      saleAttrValueName: '',
+      spuSaleAttrValueList: [
+        { id: 3, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '大', saleAttrName: '尺寸', isChecked: null },
+        { id: 4, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '小', saleAttrName: '尺寸', isChecked: null }
+      ]
+    },
+    {
+      id: 3,
+      createTime: null,
+      updateTime: null,
+      spuId: item.id,
+      saleAttrName: '版本',
+      saleAttrValueName: '',
+      spuSaleAttrValueList: [
+        { id: 5, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '标准版', saleAttrName: '版本', isChecked: null },
+        { id: 6, createTime: null, updateTime: null, spuId: item.id, saleAttrValueName: '旗舰版', saleAttrName: '版本', isChecked: null }
+      ]
+    }
+  ];
+});
+
+let allSaleAttr = [
+  { id: 1, name: '颜色' },
+  { id: 2, name: '尺寸' },
+  { id: 3, name: '版本' }
+];
+
 export default [
   {
     url: '/admin/product/:page/:limit',
@@ -1717,7 +1788,14 @@ export default [
       if (!category3Id) {
         return { code: 400, message: '参数错误', ok: false, data: null };
       }
-      const records = spuArr.filter(item => Number(item.category3Id) === category3Id);
+      // 补充saleAttrList和spuImageList
+      const records = spuArr
+        .filter(item => Number(item.category3Id) === category3Id)
+        .map(item => ({
+          ...item,
+          spuSaleAttrList: spuSaleAttrs[item.id] || [],
+          spuImageList: spuImages[item.id] || []
+        }));
       const total = records.length;
       const start = (page - 1) * limit;
       const end = start + limit;
@@ -1736,26 +1814,43 @@ export default [
         }
       }
     }
+  },
+  // 获取SPU图片列表
+  {
+    url: /\/admin\/product\/spuImageList\d+/,
+    method: 'get',
+    response: ({ url }) => {
+      const spuId = url.match(/spuImageList(\d+)/)?.[1];
+      // spuId为字符串，需转为数字
+      return {
+        code: 200,
+        data: spuImages[Number(spuId)] || []
+      };
+    }
+  },
+  // 获取SPU已有销售属性
+  {
+    url: /\/admin\/product\/spuSaleAttrList\d+/,
+    method: 'get',
+    response: ({ url }) => {
+      const spuId = url.match(/spuSaleAttrList(\d+)/)?.[1];
+      // spuId为字符串，需转为数字
+      return {
+        code: 200,
+        data: spuSaleAttrs[Number(spuId)] || []
+      };
+    }
+  },
+  // 获取全部销售属性
+  {
+    url: '/admin/product/baseSaleAttrList',
+    method: 'get',
+    response: () => {
+      return {
+        code: 200,
+        data: allSaleAttr
+      };
+    }
   }
 ] as MockMethod[];
 
-// 如需扩展厨卫电器、个护健康等分类的spu数据，建议添加如下：
-// 例如：
-// {
-//   id: 1001,
-//   spuName: '美的侧吸油烟机CXW-200',
-//   description: '大吸力，一级能效',
-//   category3Id: 411,
-//   tmId: 10, // 美的
-//   spuSaleAttrList: null,
-//   spuImageList: null,
-// },
-// {
-//   id: 1002,
-//   spuName: '飞科旋转式剃须刀FS360',
-//   description: '三刀头，干湿两用',
-//   category3Id: 511,
-//   tmId: 38, // 假设飞科品牌id为38
-//   spuSaleAttrList: null,
-//   spuImageList: null,
-// }

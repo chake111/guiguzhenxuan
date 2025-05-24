@@ -44,6 +44,18 @@ let imgList = ref<SpuImag[]>()
 let saleAttr = ref<SaleAttr[]>()
 let allSaleAttr = ref<HasSaleAttr[]>()
 
+// 新增：el-upload所需变量和方法
+const fileList = ref<any[]>([]);
+const dialogVisible = ref(false);
+const dialogImageUrl = ref('');
+const handlePictureCardPreview = (file: any) => {
+  dialogImageUrl.value = file.url || file.response?.url;
+  dialogVisible.value = true;
+};
+const handleRemove = (file: any, fileList_: any[]) => {
+  // 可根据需要处理移除逻辑
+};
+
 const cancel = () => {
   $emit('changeScene', 0);
 }
@@ -58,9 +70,15 @@ const initHasSpuData = async (spu?: SpuData) => {
     let result2: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
     imgList.value = result1.data;
     saleAttr.value = result2.data;
+    // 同步fileList用于el-upload显示
+    fileList.value = result1.data.map(img => ({
+      name: img.imgName,
+      url: img.imgUrl
+    }));
   } else {
     imgList.value = [];
     saleAttr.value = [];
+    fileList.value = [];
   }
 }
 
