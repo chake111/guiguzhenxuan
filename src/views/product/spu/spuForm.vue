@@ -15,7 +15,7 @@
           <img w-full :src="dialogImageUrl" alt="Preview Image" />
         </el-dialog></el-form-item>
       <el-form-item label="SPU销售属性">
-        <el-select style="width: 240px;margin-right: 10px 0px;"></el-select><el-button type="primary"
+        <el-select style="width: 240px;margin-right: 10px;"></el-select><el-button type="primary"
           icon="Plus">添加销售属性</el-button>
         <el-table style="margin: 10px 0px;" border>
           <el-table-column label="序号" align="center" width="80px"></el-table-column>
