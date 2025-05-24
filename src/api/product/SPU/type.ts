@@ -10,7 +10,7 @@ export interface SpuData {
   spuName: string,
   description: string,
   category3Id: string | number,
-  tmId: number,
+  tmId: number|string,
   spuSaleAttrList: null | SaleAttr[],
   spuImageList: null | SpuImag[],
 }

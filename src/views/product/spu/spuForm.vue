@@ -1,9 +1,13 @@
 <template>
   <div>
     <el-form label-width="100px">
-      <el-form-item label="SPU名称"><el-input placeholder="请输入SPU名称"></el-input></el-form-item>
-      <el-form-item label="SPU品牌"><el-select style="width: 240px"></el-select></el-form-item>
-      <el-form-item label="SPU描述"><el-input type="textarea" placeholder="请输入SPU描述"></el-input></el-form-item>
+      <el-form-item label="SPU名称"><el-input placeholder="请输入SPU名称"
+          v-model="SpuParams.spuName"></el-input></el-form-item>
+      <el-form-item label="SPU品牌">
+        <el-select style="width: 240px" v-model="SpuParams.tmId">
+          <el-option v-for="(item,index) in AllTradeMark" :key="item.id" :label="item.tmName" :value="item.id"></el-option>
+        </el-select></el-form-item>
+      <el-form-item label="SPU描述"><el-input type="textarea" placeholder="请输入SPU描述" v-model="SpuParams.description"></el-input></el-form-item>
       <el-form-item label="SPU照片"> <el-upload v-model:file-list="fileList"
           action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" list-type="picture-card"
           :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
@@ -43,6 +47,14 @@ let AllTradeMark = ref<Trademark[]>();
 let imgList = ref<SpuImag[]>()
 let saleAttr = ref<SaleAttr[]>()
 let allSaleAttr = ref<HasSaleAttr[]>()
+let SpuParams = ref<SpuData>({
+  spuName: '',
+  description: '',
+  category3Id: '',
+  tmId: '',
+  spuSaleAttrList: [],
+  spuImageList: []
+});
 
 // 新增：el-upload所需变量和方法
 const fileList = ref<any[]>([]);
@@ -61,6 +73,7 @@ const cancel = () => {
 }
 
 const initHasSpuData = async (spu?: SpuData) => {
+  SpuParams.value = spu;
   let result: AllTradeMark = await reqAllTradeMark();
   let result3: HasSaleAttrResponseData = await reqAllSaleAttr();
   AllTradeMark.value = result.data;
