@@ -2,7 +2,7 @@
   <div>
     <Category :scene="scene" />
     <el-card style="margin: 10px 0px;">
-      <div v-show="scene == false">
+      <div v-show="scene == 0 ? true : false">
         <el-button @click="addAttr" type="primary" size="default" icon="Plus"
           :disabled="categoryStore.c3Id ? false : true">添加平台属性</el-button>
         <el-table border style="margin: 10px 0px;" :data="attrArr">
@@ -11,23 +11,23 @@
           <el-table-column label="属性值名称">
             <template #="{ row, $index }">
               <el-tag style="margin: 5px;" v-for="(item, index) in row.attrValueList" :key="item.id">{{ item.valueName
-              }}</el-tag>
+                }}</el-tag>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200px">
             <template #="{ row, $index }">
-              <el-button @click="updateAttr(row)" type="primary" size="small" icon="Edit">编辑</el-button>
+              <el-button @click="updateAttr(row)" type="warning" size="small" icon="Edit">编辑</el-button>
               <el-popconfirm :title="`你确定要删除${row.attrName}吗?`" width="250px" icon="Delete"
                 @confirm="deleteAttr(row.id)">
                 <template #reference>
-                  <el-button type="primary" size="small" icon="Delete">删除</el-button>
+                  <el-button type="danger" size="small" icon="Delete">删除</el-button>
                 </template>
               </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
       </div>
-      <div v-show="scene == true">
+      <div v-show="scene == 1 ? true : false">
         <el-form :inline="true">
           <el-form-item label="属性名称">
             <el-input placeholder="请输入属性名称" v-model="attrParams.attrName"></el-input>
@@ -46,7 +46,7 @@
           </el-table-column>
           <el-table-column label="操作">
             <template #="{ row, $index }">
-              <el-button @click="deleteAttrValue(row, $index)" type="warning" icon="Delete"
+              <el-button @click="deleteAttrValue(row, $index)" type="danger" icon="Delete"
                 :disabled="!row.valueName.trim()">删除</el-button>
             </template>
           </el-table-column>
@@ -69,7 +69,7 @@ import { reactive, ref, watch, nextTick, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 let categoryStore = useCategoryStore();
 let attrArr = ref<Attr[]>([]);
-let scene = ref(false);
+let scene = ref<number>(0);
 let attrParams = reactive<Attr>({
   attrName: '',
   categoryId: '',
