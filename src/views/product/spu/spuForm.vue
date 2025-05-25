@@ -241,20 +241,31 @@ const save = async () => {
   let result = await reqAddOrUpdateSpu(SpuParams.value);
   if (result.code == 200) {
     ElMessage.success(SpuParams.value.id ? '更新成功' : '保存成功');
-    $emit('changeScene', 0);
+    $emit('changeScene', 0, !SpuParams.value.id); // 新增时isAdd为true，更新为false
   } else {
     ElMessage.success(SpuParams.value.id ? '更新失败' : '保存失败');
   }
 }
 
-const initAddSpu = async (c3Id:number|string) => {
-  let result:AllTradeMark = await reqAllTradeMark();
-  let result1:HasSaleAttrResponseData = await reqAllSaleAttr();
+const initAddSpu = async (c3Id: number | string) => {
+  Object.assign(SpuParams.value, {
+    spuName: '',
+    description: '',
+    category3Id: '',
+    tmId: '',
+    spuSaleAttrList: [],
+    spuImageList: []
+  })
+  imgList.value = [];
+  saleAttr.value = [];
+  saleAttrAndName.value = '';
+  SpuParams.value.category3Id = c3Id;
+  let result: AllTradeMark = await reqAllTradeMark();
+  let result1: HasSaleAttrResponseData = await reqAllSaleAttr();
   AllTradeMark.value = result.data;
   allSaleAttr.value = result1.data;
-  SpuParams.value.category3Id = c3Id;
 }
-defineExpose({ initHasSpuData,initAddSpu })
+defineExpose({ initHasSpuData, initAddSpu })
 </script>
 
 <style></style>

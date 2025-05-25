@@ -123,6 +123,34 @@ export default [
       }
     }
   },
+  // mock 新增SPU接口
+  {
+    url: '/admin/product/saveSpuInfo',
+    method: 'post',
+    response: ({ body }) => {
+      // 生成新id
+      const maxId = typedSpuArr.length > 0 ? Math.max(...typedSpuArr.map(item => item.id)) : 0;
+      const newId = maxId + 1;
+      const newSpu = {
+        ...body,
+        id: newId,
+      };
+      typedSpuArr.push(newSpu);
+      // 同步图片和销售属性
+      if (body.spuImageList) {
+        spuImages[newId] = body.spuImageList;
+      }
+      if (body.spuSaleAttrList) {
+        spuSaleAttrs[newId] = body.spuSaleAttrList;
+      }
+      return {
+        code: 200,
+        message: '新增成功',
+        ok: true,
+        data: null
+      };
+    }
+  },
   // mock 更新SPU接口
   {
     url: '/admin/product/updateSpuInfo',

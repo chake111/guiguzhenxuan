@@ -77,16 +77,36 @@ onMounted(() => {
 const addSpu = () => {
   scene.value = 1;
   spu.value.initAddSpu(categoryStore.c3Id);
+  // 标记为添加
+  changeScene(1, true);
 }
 
 const updateSpu = (row: SpuData) => {
   scene.value = 1;
   spu.value.initHasSpuData(row);
+  // 标记为更新
+  changeScene(1, false);
 }
 
-const changeScene = (num: number) => {
+// 修改changeScene，支持区分添加/更新
+const changeScene = async (num: number, isAdd = false) => {
   scene.value = num;
-  getHasSpu();
+  if (num === 0) {
+    if (isAdd) {
+      // 添加后跳转到最后一页
+      // 先获取总数
+      let result: HasSpuResponseData = await reqHasSpu(1, limit.value, categoryStore.c3Id);
+      if (result.code == 200) {
+        const totalCount = result.data.total;
+        const lastPage = Math.ceil(totalCount / limit.value);
+        pageNo.value = lastPage;
+        await getHasSpu(lastPage);
+      }
+    } else {
+      // 更新后留在当前页
+      await getHasSpu(pageNo.value);
+    }
+  }
 }
 </script>
 
