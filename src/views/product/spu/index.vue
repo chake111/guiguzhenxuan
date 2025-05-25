@@ -35,6 +35,7 @@ import { useCategoryStore } from "@/stores/modules/Category";
 import { onMounted, ref, watch } from "vue";
 import SpuForm from "./spuForm.vue";
 import SkuForm from "./skuForm.vue";
+import { ElMessage } from "element-plus";
 
 let pageNo = ref<number>(1);
 let limit = ref<number>(3);
@@ -53,12 +54,19 @@ watch(() => categoryStore.c3Id, () => {
 })
 
 const getHasSpu = async (pager = 1) => {
-
+  if (!categoryStore.c3Id) {
+    records.value = [];
+    total.value = 0;
+    return;
+  }
   pageNo.value = pager;
   let result: HasSpuResponseData = await reqHasSpu(pageNo.value, limit.value, categoryStore.c3Id);
-  if (result.code == 200) {
-    records.value = result.data.records;
-    total.value = result.data.total;
+  if (result.code == 200 && result.data) {
+    records.value = result.data.records || [];
+    total.value = result.data.total || 0;
+  } else {
+    records.value = [];
+    total.value = 0;
   }
 }
 
@@ -70,40 +78,44 @@ onMounted(() => {
   if (!categoryStore.c3Id) {
     records.value = [];
     return;
-  };
+  }
   getHasSpu();
 })
 
 const addSpu = () => {
+  if (!categoryStore.c3Id) {
+    ElMessage.warning('请先选择三级分类');
+    return;
+  }
   scene.value = 1;
-  spu.value.initAddSpu(categoryStore.c3Id);
-  // 标记为添加
+  spu.value?.initAddSpu(categoryStore.c3Id);
   changeScene(1, true);
 }
 
 const updateSpu = (row: SpuData) => {
+  if (!row) return;
   scene.value = 1;
-  spu.value.initHasSpuData(row);
-  // 标记为更新
+  spu.value?.initHasSpuData(row);
   changeScene(1, false);
 }
 
-// 修改changeScene，支持区分添加/更新
 const changeScene = async (num: number, isAdd = false) => {
   scene.value = num;
   if (num === 0) {
+    if (!categoryStore.c3Id) {
+      records.value = [];
+      total.value = 0;
+      return;
+    }
     if (isAdd) {
-      // 添加后跳转到最后一页
-      // 先获取总数
       let result: HasSpuResponseData = await reqHasSpu(1, limit.value, categoryStore.c3Id);
-      if (result.code == 200) {
-        const totalCount = result.data.total;
-        const lastPage = Math.ceil(totalCount / limit.value);
+      if (result.code == 200 && result.data) {
+        const totalCount = result.data.total || 0;
+        const lastPage = Math.max(1, Math.ceil(totalCount / limit.value));
         pageNo.value = lastPage;
         await getHasSpu(lastPage);
       }
     } else {
-      // 更新后留在当前页
       await getHasSpu(pageNo.value);
     }
   }

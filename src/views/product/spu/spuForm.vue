@@ -175,7 +175,15 @@ const beforeImageUpload = (file: File) => {
 };
 
 const addSaleAttr = () => {
+  if (!saleAttrAndName.value) {
+    ElMessage.warning('请选择要添加的销售属性');
+    return;
+  }
   const [baseSaleAttrId, saleAttrName] = saleAttrAndName.value.split(':');
+  if (!baseSaleAttrId || !saleAttrName) {
+    ElMessage.warning('销售属性数据异常');
+    return;
+  }
   let newSaleAttr: SaleAttr = {
     baseSaleAttrId,
     saleAttrName,
@@ -231,23 +239,55 @@ const setInputRef = (index: number) => (el: any) => {
 }
 
 const save = async () => {
-  SpuParams.value.spuImageList = (imgList.value ?? []).map((item: any) => {
-    return {
-      imgName: item.name,
-      imgUrl: item.url,
+  try {
+    // 校验必填项
+    if (!SpuParams.value.spuName?.trim()) {
+      ElMessage.error('SPU名称不能为空');
+      return;
     }
-  })
-  SpuParams.value.spuSaleAttrList = saleAttr.value ?? [];
-  let result = await reqAddOrUpdateSpu(SpuParams.value);
-  if (result.code == 200) {
-    ElMessage.success(SpuParams.value.id ? '更新成功' : '保存成功');
-    $emit('changeScene', 0, !SpuParams.value.id); // 新增时isAdd为true，更新为false
-  } else {
-    ElMessage.success(SpuParams.value.id ? '更新失败' : '保存失败');
+    if (!SpuParams.value.tmId) {
+      ElMessage.error('请选择SPU品牌');
+      return;
+    }
+    if (!SpuParams.value.description?.trim()) {
+      ElMessage.error('SPU描述不能为空');
+      return;
+    }
+    if (!SpuParams.value.category3Id) {
+      ElMessage.error('缺少三级分类ID');
+      return;
+    }
+    // 保证 imgList 和 saleAttr 不为 null
+    const safeImgList = Array.isArray(imgList.value) ? imgList.value : [];
+    const safeSaleAttr = Array.isArray(saleAttr.value) ? saleAttr.value : [];
+    SpuParams.value.spuImageList = safeImgList.map((item: any) => {
+      return {
+        imgName: item.name,
+        imgUrl: item.url,
+      }
+    })
+    SpuParams.value.spuSaleAttrList = safeSaleAttr;
+    let result = await reqAddOrUpdateSpu(SpuParams.value);
+    if (result && result.code == 200) {
+      ElMessage.success(SpuParams.value.id ? '更新成功' : '保存成功');
+      $emit('changeScene', 0, !SpuParams.value.id);
+    } else if (result && result.code == 400) {
+      ElMessage.error(result.message);
+    } else if (result && result.message) {
+      ElMessage.error(result.message);
+    } else {
+      ElMessage.error('保存失败，未知错误');
+    }
+  } catch (error: any) {
+    ElMessage.error('保存异常: ' + (error?.message || error));
   }
 }
 
 const initAddSpu = async (c3Id: number | string) => {
+  if (!c3Id) {
+    ElMessage.error('缺少三级分类ID');
+    return;
+  }
   Object.assign(SpuParams.value, {
     spuName: '',
     description: '',

@@ -128,9 +128,56 @@ export default [
     url: '/admin/product/saveSpuInfo',
     method: 'post',
     response: ({ body }) => {
+      if (
+        !body ||
+        typeof body.spuName !== 'string' ||
+        !body.spuName.trim() ||
+        !body.category3Id ||
+        !body.tmId
+      ) {
+        return {
+          code: 400,
+          message: '参数不完整',
+          ok: false,
+          data: null
+        };
+      }
+      // 校验spuSaleAttrList必须为非空数组且每项合法
+      if (
+        !Array.isArray(body.spuSaleAttrList) ||
+        body.spuSaleAttrList.length === 0 ||
+        body.spuSaleAttrList.some(
+          (attr: any) =>
+            !attr.baseSaleAttrId ||
+            !attr.saleAttrName ||
+            !Array.isArray(attr.spuSaleAttrValueList) ||
+            attr.spuSaleAttrValueList.length === 0 ||
+            attr.spuSaleAttrValueList.some(
+              (val: any) =>
+                !val.saleAttrValueName ||
+                typeof val.saleAttrValueName !== 'string' ||
+                !val.saleAttrValueName.trim()
+            )
+        )
+      ) {
+        return {
+          code: 400,
+          message: 'SPU销售属性及属性值不能为空且必须合法',
+          ok: false,
+          data: null
+        };
+      }
       // 生成新id
       const maxId = typedSpuArr.length > 0 ? Math.max(...typedSpuArr.map(item => item.id)) : 0;
       const newId = maxId + 1;
+      if (typedSpuArr.some(item => item.id === newId)) {
+        return {
+          code: 409,
+          message: 'ID冲突',
+          ok: false,
+          data: null
+        };
+      }
       const newSpu = {
         ...body,
         id: newId,
@@ -156,7 +203,39 @@ export default [
     url: '/admin/product/updateSpuInfo',
     method: 'post',
     response: ({ body }) => {
-      // 查找并更新spuArr中的对应项
+      if (!body || !body.id) {
+        return {
+          code: 400,
+          message: '缺少ID',
+          ok: false,
+          data: null
+        };
+      }
+      // 校验spuSaleAttrList必须为非空数组且每项合法
+      if (
+        !Array.isArray(body.spuSaleAttrList) ||
+        body.spuSaleAttrList.length === 0 ||
+        body.spuSaleAttrList.some(
+          (attr: any) =>
+            !attr.baseSaleAttrId ||
+            !attr.saleAttrName ||
+            !Array.isArray(attr.spuSaleAttrValueList) ||
+            attr.spuSaleAttrValueList.length === 0 ||
+            attr.spuSaleAttrValueList.some(
+              (val: any) =>
+                !val.saleAttrValueName ||
+                typeof val.saleAttrValueName !== 'string' ||
+                !val.saleAttrValueName.trim()
+            )
+        )
+      ) {
+        return {
+          code: 400,
+          message: 'SPU销售属性及属性值不能为空且必须合法',
+          ok: false,
+          data: null
+        };
+      }
       const idx = typedSpuArr.findIndex(item => item.id === body.id);
       if (idx !== -1) {
         typedSpuArr[idx] = {
