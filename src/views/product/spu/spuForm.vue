@@ -62,7 +62,7 @@
             </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">保存</el-button>
+        <el-button @click="save" type="primary">保存</el-button>
         <el-button @click="cancel" type="default">取消</el-button>
       </el-form-item>
     </el-form>
@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang='ts'>
-import { reqAllSaleAttr, reqAllTradeMark, reqSpuHasSaleAttr, reqSpuImageList } from '@/api/product/spu';
+import { reqAddOrUpdateSpu, reqAllSaleAttr, reqAllTradeMark, reqSpuHasSaleAttr, reqSpuImageList } from '@/api/product/spu';
 import type { AllTradeMark, HasSaleAttr, HasSaleAttrResponseData, SaleAttr, SaleAttrResponse, SaleAttrValue, SpuData, SpuHasImg, SpuImag } from '@/api/product/spu/type';
 import type { Trademark } from '@/api/product/trademark/type';
 import { computed, nextTick, ref } from 'vue';
@@ -98,7 +98,7 @@ let unSelectSaleAttr = computed(() => {
   return unSelectAttr;
 })
 let saleAttrAndName = ref<string>('');
-const inputRefs = ref<Record<number, any>>({}); // 保证为对象
+const inputRefs = ref<Record<number, any>>({});
 
 
 const dialogVisible = ref(false);
@@ -222,6 +222,18 @@ const setInputRef = (index: number) => (el: any) => {
   } else {
     delete inputRefs.value[index];
   }
+}
+const save = async () => {
+  SpuParams.value.spuImageList = (imgList.value ?? []).map((item: any) => {
+    return {
+      imgName: item.name,
+      imgUrl: item.url,
+    }
+  })
+  SpuParams.value.spuSaleAttrList = saleAttr.value ?? [];
+  let result = await reqAddOrUpdateSpu(SpuParams.value);
+  console.log(result);
+
 }
 defineExpose({ initHasSpuData })
 </script>

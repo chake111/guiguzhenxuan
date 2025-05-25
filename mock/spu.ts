@@ -122,6 +122,41 @@ export default [
         }
       }
     }
+  },
+  // mock 更新SPU接口
+  {
+    url: '/admin/product/updateSpuInfo',
+    method: 'post',
+    response: ({ body }) => {
+      // 查找并更新spuArr中的对应项
+      const idx = typedSpuArr.findIndex(item => item.id === body.id);
+      if (idx !== -1) {
+        typedSpuArr[idx] = {
+          ...typedSpuArr[idx],
+          ...body,
+        };
+        // 同步更新图片和销售属性
+        if (body.spuImageList) {
+          spuImages[body.id] = body.spuImageList;
+        }
+        if (body.spuSaleAttrList) {
+          spuSaleAttrs[body.id] = body.spuSaleAttrList;
+        }
+        return {
+          code: 200,
+          message: '更新成功',
+          ok: true,
+          data: null
+        };
+      } else {
+        return {
+          code: 404,
+          message: '未找到对应SPU',
+          ok: false,
+          data: null
+        };
+      }
+    }
   }
 ] as MockMethod[];
 

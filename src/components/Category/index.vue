@@ -9,12 +9,15 @@
           </el-select>
         </el-form-item>
         <el-form-item label="二级分类">
-          <el-select placeholder="请选择" style="width: 240px" v-model="c2Id" @change="handleC2Change" :disabled="!c1Id">
+          <el-select placeholder="请选择" style="width: 240px" v-model="c2Id" @change="handleC2Change"
+            :disabled="!c1Id || (scene == 0 ? false : true)">
             <el-option v-for="c2 in c2Arr" :key="c2.id" :label="c2.name" :value="c2.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="三级分类">
-          <el-select placeholder="请选择" style="width: 240px" v-model="c3Id" :disabled="!c2Id || !c1Id">
+
+          <el-select placeholder="请选择" style="width: 240px" v-model="c3Id"
+            :disabled="!c2Id || !c1Id || (scene == 0 ? false : true)">
             <el-option v-for="c3 in c3Arr" :key="c3.id" :label="c3.name" :value="c3.id"></el-option>
           </el-select>
         </el-form-item>
