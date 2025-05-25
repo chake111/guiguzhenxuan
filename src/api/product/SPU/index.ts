@@ -7,6 +7,7 @@ enum API {
   IMAGE_URL = '/admin/product/spuImageList',
   SPUHASSALEATTR_URL = '/admin/product/spuSaleAttrList',
   ALLSALEATTR_URL = '/admin/product/baseSaleAttrList',
+// eslint-disable-next-line no-duplicate-enum-values
   ADDSPU_URL = '/admin/product/saveSpuInfo',
   UPDATESPU_URL = '/admin/product/saveSpuInfo',
 }

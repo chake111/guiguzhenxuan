@@ -18,11 +18,11 @@
         </el-table-column>
         <el-table-column label="品牌操作">
           <template #default="{ row }">
-            <el-button type="primary" size="small" icon="Edit" @click="updataTrademark(row)">编辑</el-button>
+            <el-button type="warning" size="small" icon="Edit" @click="updataTrademark(row)">编辑</el-button>
             <el-popconfirm :title="`你确定要删除${row.tmName}吗?`" width="250px" icon="Delete"
               @confirm="() => removeTradeMark(row.id)">
               <template #reference>
-                <el-button type="primary" size="small" icon="Delete">删除</el-button>
+                <el-button type="danger" size="small" icon="Delete">删除</el-button>
               </template>
             </el-popconfirm>
           </template>

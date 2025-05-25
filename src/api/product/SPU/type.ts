@@ -41,8 +41,10 @@ export interface SpuImag {
   createTime?: string,
   updateTime?: string,
   spuId?: number,
-  imgName: string,
-  imgUrl: string,
+  imgName?: string,
+  imgUrl?: string,
+  name?:string,
+  url?:string,
 }
 
 export interface SpuHasImg extends ResponseData {
