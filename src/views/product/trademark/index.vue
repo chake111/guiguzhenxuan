@@ -73,11 +73,21 @@ let trademarkParams = reactive<Trademark>({
   logoUrl: ''
 })
 const getHasTradeMark = async (pager = 1) => {
-  pageNo.value = pager;
-  let result: TrademarkResponseData = await reqHasTradeMark(pageNo.value, limit.value);
-  if (result.code == 200) {
-    total.value = result.data.total;
-    trademarkArr.value = result.data.records;
+  try {
+    pageNo.value = pager;
+    let result: TrademarkResponseData = await reqHasTradeMark(pageNo.value, limit.value);
+    if (result && result.code == 200 && result.data) {
+      total.value = result.data.total ?? 0;
+      trademarkArr.value = Array.isArray(result.data.records) ? result.data.records : [];
+    } else {
+      total.value = 0;
+      trademarkArr.value = [];
+      ElMessage.error('获取品牌列表失败');
+    }
+  } catch (e: any) {
+    total.value = 0;
+    trademarkArr.value = [];
+    ElMessage.error('获取品牌列表异常: ' + (e?.message || e));
   }
 }
 onMounted(() => {
@@ -97,33 +107,50 @@ const addTrademark = () => {
   trademarkParams.tmName = '';
   trademarkParams.logoUrl = '';
   nextTick(() => {
-    formRef.value.clearValidate();
+    if (formRef.value && typeof formRef.value.clearValidate === 'function') {
+      formRef.value.clearValidate();
+    }
   })
 }
 const updataTrademark = (row: Trademark) => {
   dialogFormVisible.value = true;
   Object.assign(trademarkParams, row);
   nextTick(() => {
-    formRef.value.clearValidate();
+    if (formRef.value && typeof formRef.value.clearValidate === 'function') {
+      formRef.value.clearValidate();
+    }
   })
 }
 const cancel = () => {
   dialogFormVisible.value = false;
 }
 const confirm = async () => {
-  await formRef.value.validate();
-  let result: any = await reqAddOrUpdateTradeMark(trademarkParams);
-  if (result.code == 200) {
+  try {
+    if (!formRef.value || typeof formRef.value.validate !== 'function') {
+      ElMessage.error('表单未初始化');
+      return;
+    }
+    await formRef.value.validate();
+    let result: any = await reqAddOrUpdateTradeMark(trademarkParams);
+    if (result && result.code == 200) {
+      dialogFormVisible.value = false;
+      ElMessage.success(trademarkParams.id ? '修改成功' : '添加成功');
+      getHasTradeMark(pageNo.value);
+    } else {
+      ElMessage.error((trademarkParams.id ? '修改失败' : '添加失败') + (result?.data?.message ? `: ${result.data.message}` : ''));
+    }
     dialogFormVisible.value = false;
-    ElMessage.success(trademarkParams.id ? '修改成功' : '添加成功');
-    getHasTradeMark(pageNo.value);
-  } else {
-    ElMessage.error(trademarkParams.id ? '修改失败' : '添加失败');
+  } catch (e: any) {
+    ElMessage.error('操作异常: ' + (e?.message || e));
+    dialogFormVisible.value = false;
   }
-  dialogFormVisible.value = false;
 }
 
 const beforeLogoUpload = (file: File) => {
+  if (!file || typeof file !== 'object') {
+    ElMessage.error('请选择图片文件');
+    return false;
+  }
   const isJPG = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg';
   const isLt2M = file.size / 1024 / 1024 < 2;
   if (!isJPG) {
@@ -138,22 +165,33 @@ const beforeLogoUpload = (file: File) => {
 }
 
 const handleLogoChange = (uploadFile: any) => {
-  const reader = new FileReader();
-  reader.onload = (e: any) => {
-    trademarkParams.logoUrl = e.target.result;
-  };
-  reader.readAsDataURL(uploadFile.raw);
+  if (!uploadFile || !uploadFile.raw) {
+    ElMessage.error('请选择图片文件');
+    return;
+  }
+  try {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      trademarkParams.logoUrl = e?.target?.result || '';
+    };
+    reader.onerror = () => {
+      ElMessage.error('图片读取失败');
+    }
+    reader.readAsDataURL(uploadFile.raw);
+  } catch (e: any) {
+    ElMessage.error('图片处理异常: ' + (e?.message || e));
+  }
 }
 
 const validatorTmName = (rule: any, value: any, callBack: any) => {
-  if (value.trim().length >= 2) {
+  if (typeof value === 'string' && value.trim().length >= 2) {
     callBack();
   } else {
     callBack(new Error('品牌名称字数大于等于两位'))
   }
 }
 const validatorLogoUrl = (rule: any, value: any, callBack: any) => {
-  if (value && value.trim() !== '') {
+  if (value && typeof value === 'string' && value.trim() !== '') {
     callBack();
   } else {
     callBack(new Error('品牌LOGO不能为空'))
@@ -168,12 +206,16 @@ const rules = {
   ]
 }
 const removeTradeMark = async (id: number) => {
-  let result = await reqDeleteTradeMark(id);
-  if (result.code == 200) {
-    ElMessage.success("删除成功")
-    getHasTradeMark(trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
-  } else {
-    ElMessage.error("删除失败")
+  try {
+    let result = await reqDeleteTradeMark(id);
+    if (result && result.code == 200) {
+      ElMessage.success("删除成功")
+      getHasTradeMark(trademarkArr.value.length > 1 ? pageNo.value : pageNo.value - 1);
+    } else {
+      ElMessage.error("删除失败" + (result?.data?.message ? `: ${result.data.message}` : ''));
+    }
+  } catch (e: any) {
+    ElMessage.error('删除异常: ' + (e?.message || e));
   }
 }
 </script>
