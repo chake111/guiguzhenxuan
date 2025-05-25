@@ -1,7 +1,7 @@
 import { MockMethod } from 'vite-plugin-mock';
 import * as spuDataImport from './spuData';
 
-const spuData = (spuDataImport as any).default || spuDataImport;
+const spuData = spuDataImport;
 const spuArr = spuData.spuArr;
 const spuImages = spuData.spuImages;
 const spuSaleAttrs = spuData.spuSaleAttrs;

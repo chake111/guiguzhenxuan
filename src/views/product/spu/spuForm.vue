@@ -24,12 +24,18 @@
           </div>
           <div style="text-align:center;margin-top:10px;">
             <el-button size="small" @click="prevImage" :disabled="previewIndex <= 0">上一张</el-button>
-            <el-button size="small" @click="nextImage" :disabled="previewIndex >= (imgList?.length ?? 0) - 1">下一张</el-button>
+            <el-button size="small" @click="nextImage"
+              :disabled="previewIndex >= (imgList?.length ?? 0) - 1">下一张</el-button>
           </div>
         </el-dialog>
       </el-form-item>
       <el-form-item label="SPU销售属性">
-        <el-select style="width: 240px;margin-right: 10px;"></el-select><el-button type="primary"
+        <el-select v-model="saleAttrAndName" style="width: 240px;margin-right: 10px;"
+          :placeholder="unSelectSaleAttr.length ? `还未选择${unSelectSaleAttr.length}个` : '无'">
+          <el-option :value="`${item.id}:${item.name}`" v-for="(item, index) in unSelectSaleAttr" :key="item.id"
+            :label="item.name"></el-option>
+        </el-select>
+        <el-button @click="addSaleAttr" :disabled="unSelectSaleAttr.length ? false : true" type="primary"
           icon="Plus">添加销售属性</el-button>
         <el-table style="margin: 10px 0px;" border :data="saleAttr">
           <el-table-column label="序号" align="center" width="80px" type="index"></el-table-column>
@@ -40,14 +46,19 @@
           </el-table-column>
           <el-table-column label="属性值" prop="attrName">
             <template #="{ row, $index }">
-              <el-tag style="margin: 0px 5px;" v-for="(item, index) in row.spuSaleAttrValueList" :key="row.id">
+              <el-tag @close="row.spuSaleAttrValueList.splice(index,1)" closable style="margin: 0px 5px;" v-for="(item, index) in row.spuSaleAttrValueList"
+                :key="row.saleAttrName + '-' + item.saleAttrValueName + '-' + index">
                 {{ item.saleAttrValueName }}
               </el-tag>
+              <el-input autofocus :ref="setInputRef($index)" v-model="row.saleAttrValue" @blur="toLook(row)"
+                v-if="row.flag == true" size="small" style="width: 100px;margin: 0px 10px;"
+                placeholder="请输入属性值"></el-input>
+              <el-button @click="toEdit(row, $index)" v-else type="primary" size="small" icon="Plus"></el-button>
             </template>
           </el-table-column>
           <el-table-column label="操作" width="104px">
-            <template #="{row,$index}">
-              <el-button @click="saleAttr?.splice($index,1)" type="danger" icon="Delete">删除</el-button>
+            <template #="{ row, $index }">
+              <el-button @click="saleAttr?.splice($index, 1)" type="danger" icon="Delete">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -60,9 +71,9 @@
 
 <script setup lang='ts'>
 import { reqAllSaleAttr, reqAllTradeMark, reqSpuHasSaleAttr, reqSpuImageList } from '@/api/product/spu';
-import type { AllTradeMark, HasSaleAttr, HasSaleAttrResponseData, SaleAttr, SaleAttrResponse, SpuData, SpuHasImg, SpuImag } from '@/api/product/spu/type';
+import type { AllTradeMark, HasSaleAttr, HasSaleAttrResponseData, SaleAttr, SaleAttrResponse, SaleAttrValue, SpuData, SpuHasImg, SpuImag } from '@/api/product/spu/type';
 import type { Trademark } from '@/api/product/trademark/type';
-import { ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 
 let $emit = defineEmits(['changeScene']);
@@ -78,6 +89,17 @@ let SpuParams = ref<SpuData>({
   spuSaleAttrList: [],
   spuImageList: []
 });
+let unSelectSaleAttr = computed(() => {
+  let unSelectAttr = allSaleAttr.value?.filter((item) => {
+    return saleAttr.value?.every((item1) => {
+      return item.name != item1.saleAttrName;
+    })
+  }) || [];
+  return unSelectAttr;
+})
+let saleAttrAndName = ref<string>('');
+const inputRefs = ref<Record<number, any>>({}); // 保证为对象
+
 
 const dialogVisible = ref(false);
 const dialogImageUrl = ref('');
@@ -149,6 +171,58 @@ const beforeImageUpload = (file: File) => {
   return true;
 };
 
+const addSaleAttr = () => {
+  const [baseSaleAttrId, saleAttrName] = saleAttrAndName.value.split(':');
+  let newSaleAttr: SaleAttr = {
+    baseSaleAttrId,
+    saleAttrName,
+    spuSaleAttrValueList: [],
+  }
+  if (saleAttr.value) {
+    saleAttr.value.push(newSaleAttr);
+  }
+  saleAttrAndName.value = '';
+}
+const toEdit = (row: SaleAttr, index: number) => {
+  row.flag = true;
+  row.saleAttrValue = '';
+  nextTick(() => {
+    if (inputRefs.value && inputRefs.value[index]) {
+      inputRefs.value[index].focus();
+    }
+  });
+}
+const toLook = (row: SaleAttr) => {
+  const { id, saleAttrValue } = row;
+  if ((saleAttrValue?.trim?.() ?? '') == '') {
+    ElMessage.error('属性值不能为空')
+    row.flag = false;
+    return;
+  }
+  let repeat = row.spuSaleAttrValueList.find(item => {
+    return item.saleAttrValueName == saleAttrValue;
+  })
+  if (repeat) {
+    ElMessage.error('属性值不能重复')
+    row.flag = false;
+    return;
+  }
+
+  let newSaleAttrValue: SaleAttrValue = {
+    id,
+    saleAttrValueName: (saleAttrValue as string),
+  }
+  row.spuSaleAttrValueList.push(newSaleAttrValue);
+  row.flag = false;
+}
+const setInputRef = (index: number) => (el: any) => {
+  if (!inputRefs.value || typeof inputRefs.value !== 'object') inputRefs.value = {};
+  if (el) {
+    inputRefs.value[index] = el;
+  } else {
+    delete inputRefs.value[index];
+  }
+}
 defineExpose({ initHasSpuData })
 </script>
 

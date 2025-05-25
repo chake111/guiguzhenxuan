@@ -96,7 +96,7 @@ const addAttr = () => {
     categoryLevel: 3,
     attrValueList: [],
   })
-  scene.value = true;
+  scene.value = 1;
 }
 const updateAttr = (row: Attr) => {
   Object.assign(attrParams, {
@@ -106,10 +106,10 @@ const updateAttr = (row: Attr) => {
     categoryLevel: row.categoryLevel,
     attrValueList: row.attrValueList.map(item => ({ ...item })),
   });
-  scene.value = true;
+  scene.value = 1;
 }
 const cancel = () => {
-  scene.value = false;
+  scene.value = 0;
 }
 const addAttrValue = () => {
   attrParams.attrValueList.push(
@@ -159,7 +159,7 @@ const save = async () => {
   let result: any = await reqAddOrUpdateAttr(attrParams);
   if (result.code == 200) {
     ElMessage.success(attrParams.id ? '修改成功' : '添加成功');
-    scene.value = false;
+    scene.value = 0;
     getAttr();
   } else {
     ElMessage.error(attrParams.id ? '修改失败' : '添加失败');
