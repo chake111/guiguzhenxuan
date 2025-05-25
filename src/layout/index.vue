@@ -2,7 +2,7 @@
   <div class="layout_container">
     <div class="layout_slider" :class="{ fold: LayoutSettingStore.fold }">
       <transition name="slider-content-fade" mode="out-in">
-        <div class="slider-content" :key="LayoutSettingStore.fold">
+        <div class="slider-content" :key="String(LayoutSettingStore.fold)">
           <Logo />
           <el-scrollbar class="scrollbar">
             <el-menu :collapse="LayoutSettingStore.fold" router :default-active="$route.path" background-color="#001529"
