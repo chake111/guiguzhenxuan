@@ -5,11 +5,13 @@
           v-model="SpuParams.spuName"></el-input></el-form-item>
       <el-form-item label="SPU品牌">
         <el-select style="width: 240px" v-model="SpuParams.tmId">
-          <el-option v-for="(item,index) in AllTradeMark" :key="item.id" :label="item.tmName" :value="item.id"></el-option>
+          <el-option v-for="(item, index) in AllTradeMark" :key="item.id" :label="item.tmName"
+            :value="item.id"></el-option>
         </el-select></el-form-item>
-      <el-form-item label="SPU描述"><el-input type="textarea" placeholder="请输入SPU描述" v-model="SpuParams.description"></el-input></el-form-item>
+      <el-form-item label="SPU描述"><el-input type="textarea" placeholder="请输入SPU描述"
+          v-model="SpuParams.description"></el-input></el-form-item>
       <el-form-item label="SPU照片"> <el-upload v-model:file-list="fileList"
-          action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15" list-type="picture-card"
+          action="/admin/product/fileUpLoad" list-type="picture-card"
           :on-preview="handlePictureCardPreview" :on-remove="handleRemove">
           <el-icon>
             <Plus />
@@ -73,7 +75,7 @@ const cancel = () => {
 }
 
 const initHasSpuData = async (spu?: SpuData) => {
-  SpuParams.value = spu;
+  SpuParams.value = (spu as SpuData);
   let result: AllTradeMark = await reqAllTradeMark();
   let result3: HasSaleAttrResponseData = await reqAllSaleAttr();
   AllTradeMark.value = result.data;
@@ -83,7 +85,6 @@ const initHasSpuData = async (spu?: SpuData) => {
     let result2: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
     imgList.value = result1.data;
     saleAttr.value = result2.data;
-    // 同步fileList用于el-upload显示
     fileList.value = result1.data.map(img => ({
       name: img.imgName,
       url: img.imgUrl
