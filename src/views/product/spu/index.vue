@@ -10,7 +10,7 @@
           <el-table-column label="SPU描述" prop="description" show-overflow-tooltip></el-table-column>
           <el-table-column label="操作">
             <template #="{ row, $index }">
-              <el-button type="primary" icon="Plus" size="small" title="添加SPU"></el-button>
+              <el-button @click="addSpu" type="primary" icon="Plus" size="small" title="添加SPU"></el-button>
               <el-button @click="updateSpu(row)" type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
               <el-button type="info" icon="InfoFilled" size="small" title="查看SPU列表"></el-button>
               <el-button type="danger" icon="Delete" size="small" title="删除SPU"></el-button>
@@ -76,16 +76,17 @@ onMounted(() => {
 
 const addSpu = () => {
   scene.value = 1;
-  spu.value.initHasSpuData(); // 新增时不传参数
+  spu.value.initAddSpu(categoryStore.c3Id);
 }
 
 const updateSpu = (row: SpuData) => {
   scene.value = 1;
-  spu.value.initHasSpuData(row); // 编辑时传递row
+  spu.value.initHasSpuData(row);
 }
 
 const changeScene = (num: number) => {
   scene.value = num;
+  getHasSpu();
 }
 </script>
 

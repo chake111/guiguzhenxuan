@@ -30,7 +30,8 @@
         </el-dialog>
       </el-form-item>
       <el-form-item label="SPU销售属性">
-        <el-select v-model="saleAttrAndName" style="width: 240px;margin-right: 10px;"
+        <el-select :disabled="unSelectSaleAttr.length ? false : true" v-model="saleAttrAndName"
+          style="width: 240px;margin-right: 10px;"
           :placeholder="unSelectSaleAttr.length ? `还未选择${unSelectSaleAttr.length}个` : '无'">
           <el-option :value="`${item.id}:${item.name}`" v-for="(item, index) in unSelectSaleAttr" :key="item.id"
             :label="item.name"></el-option>
@@ -46,7 +47,8 @@
           </el-table-column>
           <el-table-column label="属性值" prop="attrName">
             <template #="{ row, $index }">
-              <el-tag @close="row.spuSaleAttrValueList.splice(index,1)" closable style="margin: 0px 5px;" v-for="(item, index) in row.spuSaleAttrValueList"
+              <el-tag @close="row.spuSaleAttrValueList.splice(index, 1)" closable style="margin: 0px 5px;"
+                v-for="(item, index) in row.spuSaleAttrValueList"
                 :key="row.saleAttrName + '-' + item.saleAttrValueName + '-' + index">
                 {{ item.saleAttrValueName }}
               </el-tag>
@@ -77,18 +79,19 @@ import { computed, nextTick, ref } from 'vue';
 import { ElMessage } from 'element-plus';
 
 let $emit = defineEmits(['changeScene']);
-let AllTradeMark = ref<Trademark[]>();
+let AllTradeMark = ref<Trademark[]>([]);
 let imgList = ref<SpuImag[]>()
-let saleAttr = ref<SaleAttr[]>()
-let allSaleAttr = ref<HasSaleAttr[]>()
-let SpuParams = ref<SpuData>({
+let saleAttr = ref<SaleAttr[]>([])
+let allSaleAttr = ref<HasSaleAttr[]>([])
+const defaultSpuParams: SpuData = {
   spuName: '',
   description: '',
   category3Id: '',
   tmId: '',
   spuSaleAttrList: [],
   spuImageList: []
-});
+};
+let SpuParams = ref<SpuData>({ ...defaultSpuParams });
 let unSelectSaleAttr = computed(() => {
   let unSelectAttr = allSaleAttr.value?.filter((item) => {
     return saleAttr.value?.every((item1) => {
@@ -138,7 +141,7 @@ const cancel = () => {
 }
 
 const initHasSpuData = async (spu?: SpuData) => {
-  SpuParams.value = (spu as SpuData);
+  SpuParams.value = { ...defaultSpuParams, ...spu };
   let result: AllTradeMark = await reqAllTradeMark();
   let result3: HasSaleAttrResponseData = await reqAllSaleAttr();
   AllTradeMark.value = result.data;
@@ -183,6 +186,7 @@ const addSaleAttr = () => {
   }
   saleAttrAndName.value = '';
 }
+
 const toEdit = (row: SaleAttr, index: number) => {
   row.flag = true;
   row.saleAttrValue = '';
@@ -192,6 +196,7 @@ const toEdit = (row: SaleAttr, index: number) => {
     }
   });
 }
+
 const toLook = (row: SaleAttr) => {
   const { id, saleAttrValue } = row;
   if ((saleAttrValue?.trim?.() ?? '') == '') {
@@ -215,6 +220,7 @@ const toLook = (row: SaleAttr) => {
   row.spuSaleAttrValueList.push(newSaleAttrValue);
   row.flag = false;
 }
+
 const setInputRef = (index: number) => (el: any) => {
   if (!inputRefs.value || typeof inputRefs.value !== 'object') inputRefs.value = {};
   if (el) {
@@ -223,6 +229,7 @@ const setInputRef = (index: number) => (el: any) => {
     delete inputRefs.value[index];
   }
 }
+
 const save = async () => {
   SpuParams.value.spuImageList = (imgList.value ?? []).map((item: any) => {
     return {
@@ -232,10 +239,22 @@ const save = async () => {
   })
   SpuParams.value.spuSaleAttrList = saleAttr.value ?? [];
   let result = await reqAddOrUpdateSpu(SpuParams.value);
-  console.log(result);
-
+  if (result.code == 200) {
+    ElMessage.success(SpuParams.value.id ? '更新成功' : '保存成功');
+    $emit('changeScene', 0);
+  } else {
+    ElMessage.success(SpuParams.value.id ? '更新失败' : '保存失败');
+  }
 }
-defineExpose({ initHasSpuData })
+
+const initAddSpu = async (c3Id:number|string) => {
+  let result:AllTradeMark = await reqAllTradeMark();
+  let result1:HasSaleAttrResponseData = await reqAllSaleAttr();
+  AllTradeMark.value = result.data;
+  allSaleAttr.value = result1.data;
+  SpuParams.value.category3Id = c3Id;
+}
+defineExpose({ initHasSpuData,initAddSpu })
 </script>
 
 <style></style>
