@@ -24,4 +24,4 @@ export const reqAddOrUpdateSpu = (data: SpuData) => {
     return request.post<any, any>(API.ADDSPU_URL, data);
   }
 }
-export const reqAddSku = (data: SkuData) => request.post<any, any>(API.ADDSKU_URL);
+export const reqAddSku = (data: SkuData) => request.post<any, any>(API.ADDSKU_URL, data);

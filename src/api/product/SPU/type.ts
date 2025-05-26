@@ -1,4 +1,3 @@
-
 export interface ResponseData {
   code: number,
   message: string,
@@ -105,9 +104,9 @@ export interface SkuData {
   tmId: string | number,
   skuName: string,
   price: string | number,
-  weight: string,
+  weight: string | number,
   skuDesc: string,
-  skuAttrValueList?: Attr[],
-  skuSaleAttrValueList?: SaleAttr[],
+  skuAttrValueList: Attr[],
+  skuSaleAttrValueList: SaleAttr[],
   skuDefaultImg: string,
 }

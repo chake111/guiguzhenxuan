@@ -134,7 +134,9 @@ const save = async () => {
   if (result.code == 200) {
     ElMessage.success('添加SKU成功');
   } else {
-    ElMessage.error('添加SKU失败');
+    ElMessage.error(result.message);
+    console.log(result);
+
   }
 
   $emit('changeScene', false);

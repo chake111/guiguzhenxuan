@@ -1755,4 +1755,6 @@ export const allSaleAttr = [
   { id: 3, name: '版本' }
 ];
 
+export let skuArr: any[] = [];
+
 export default spuArr;

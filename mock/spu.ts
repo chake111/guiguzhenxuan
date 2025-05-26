@@ -264,6 +264,60 @@ export default [
         };
       }
     }
+  },
+  // mock 新增SKU接口
+  {
+    url: '/admin/product/saveSkuInfo',
+    method: 'post',
+    response: ({ body }) => {
+      if (
+        !body ||
+        typeof body.skuName !== 'string' ||
+        !body.skuName.trim() ||
+        !body.category3Id ||
+        !body.spuId ||
+        !body.tmId ||
+        body.price === undefined || body.price === null ||
+        body.weight === undefined || body.weight === null ||
+        typeof body.skuDesc !== 'string' ||
+        !body.skuDesc.trim() ||
+        !Array.isArray(body.skuAttrValueList) ||
+        !Array.isArray(body.skuSaleAttrValueList) ||
+        typeof body.skuDefaultImg !== 'string'
+      ) {
+        return {
+          code: 400,
+          message: '参数不完整',
+          ok: false,
+          data: null
+        };
+      }
+      // 生成新id
+      const maxId = spuData.skuArr && spuData.skuArr.length > 0 ? Math.max(...spuData.skuArr.map(item => item.id)) : 0;
+      const newId = maxId + 1;
+      if (spuData.skuArr && spuData.skuArr.some(item => item.id === newId)) {
+        return {
+          code: 409,
+          message: 'ID冲突',
+          ok: false,
+          data: null
+        };
+      }
+      const newSku = {
+        ...body,
+        id: newId,
+      };
+      if (!spuData.skuArr) {
+        spuData.skuArr = [];
+      }
+      spuData.skuArr.push(newSku);
+      return {
+        code: 200,
+        message: '新增成功',
+        ok: true,
+        data: null
+      };
+    }
   }
 ] as MockMethod[];
 
