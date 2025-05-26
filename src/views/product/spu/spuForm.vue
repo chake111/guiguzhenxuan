@@ -257,7 +257,6 @@ const save = async () => {
       ElMessage.error('缺少三级分类ID');
       return;
     }
-    // 保证 imgList 和 saleAttr 不为 null
     const safeImgList = Array.isArray(imgList.value) ? imgList.value : [];
     const safeSaleAttr = Array.isArray(saleAttr.value) ? saleAttr.value : [];
     SpuParams.value.spuImageList = safeImgList.map((item: any) => {

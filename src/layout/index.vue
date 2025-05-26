@@ -90,7 +90,8 @@ export default {
     left: $base-menu-width;
     top: $base-tabbar-height;
     padding: 20px;
-    overflow: scroll; // 横纵滚动条始终显示，统一逻辑
+    overflow-y: scroll; // 始终显示纵向滚动条
+    overflow-x: auto; // 横向滚动条仅在需要时显示，避免切换页面闪烁
     scrollbar-gutter: stable both-edges; // 保证滚动条区域稳定
     transition: width 0.3s cubic-bezier(.55, 0, .1, 1), left 0.3s cubic-bezier(.55, 0, .1, 1);
 
@@ -121,7 +122,7 @@ export default {
 
 /* 滚动条美化 */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 0px;
   height: 8px;
   background: #f5f5f5;
 }
@@ -140,9 +141,4 @@ export default {
   background: #f5f5f5;
 }
 
-/* Firefox */
-:deep(*) {
-  scrollbar-width: thin;
-  scrollbar-color: #bdbdbd #f5f5f5;
-}
 </style>
