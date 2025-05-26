@@ -90,7 +90,8 @@ export default {
     left: $base-menu-width;
     top: $base-tabbar-height;
     padding: 20px;
-    overflow: auto;
+    overflow: scroll; // 横纵滚动条始终显示，统一逻辑
+    scrollbar-gutter: stable both-edges; // 保证滚动条区域稳定
     transition: width 0.3s cubic-bezier(.55, 0, .1, 1), left 0.3s cubic-bezier(.55, 0, .1, 1);
 
     &.fold {
@@ -116,5 +117,32 @@ export default {
 .slider-content-fade-leave-from {
   opacity: 1;
   transform: translateX(0) scale(1);
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: #f5f5f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #888;
+}
+
+::-webkit-scrollbar-corner {
+  background: #f5f5f5;
+}
+
+/* Firefox */
+:deep(*) {
+  scrollbar-width: thin;
+  scrollbar-color: #bdbdbd #f5f5f5;
 }
 </style>

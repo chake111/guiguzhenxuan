@@ -1,6 +1,5 @@
 <template>
   <div class="home-dashboard">
-    <!-- 核心数据概览 -->
     <el-row :gutter="16" class="dashboard-overview">
       <el-col :span="6" v-for="item in overviewCards" :key="item.label">
         <el-card>
