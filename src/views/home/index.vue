@@ -197,7 +197,6 @@ onMounted(() => {
 
 <style scoped>
 .home-dashboard {
-  padding: 24px;
   background: #f5f6fa;
   min-height: 100vh;
 }
@@ -227,7 +226,10 @@ onMounted(() => {
 
 .chart-echarts {
   width: 100%;
-  height: 180px;
+  aspect-ratio: 2 / 1;
+  /* 保持宽高比为2:1，防止拉伸变形 */
   min-width: 0;
+  min-height: 180px;
+  max-height: 320px;
 }
 </style>
