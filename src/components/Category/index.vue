@@ -3,20 +3,20 @@
     <el-card>
       <el-form :inline="true">
         <el-form-item label="一级分类">
-          <el-select placeholder="请选择" style="width: 240px" v-model="c1Id" @change="handleC1Change"
+          <el-select placeholder="请选择" style="width: 230px" v-model="c1Id" @change="handleC1Change"
             :disabled="scene == 0 ? false : true">
             <el-option v-for="(c1, index) in c1Arr" :key="c1.id" :label="c1.name" :value="c1.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="二级分类">
-          <el-select placeholder="请选择" style="width: 240px" v-model="c2Id" @change="handleC2Change"
+          <el-select placeholder="请选择" style="width: 230px" v-model="c2Id" @change="handleC2Change"
             :disabled="!c1Id || (scene == 0 ? false : true)">
             <el-option v-for="c2 in c2Arr" :key="c2.id" :label="c2.name" :value="c2.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="三级分类">
 
-          <el-select placeholder="请选择" style="width: 240px" v-model="c3Id"
+          <el-select placeholder="请选择" style="width: 230px" v-model="c3Id"
             :disabled="!c2Id || !c1Id || (scene == 0 ? false : true)">
             <el-option v-for="c3 in c3Arr" :key="c3.id" :label="c3.name" :value="c3.id"></el-option>
           </el-select>
