@@ -23,7 +23,7 @@ watch(() => LayoutSettingStore.refresh,() => {
 
 <style lang="scss" scoped>
 .fade-enter-active, .fade-leave-active {
-    transition: 
+    transition:
         opacity 0.5s cubic-bezier(.55,0,.1,1),
         transform 0.5s cubic-bezier(.55,0,.1,1),
         box-shadow 0.5s cubic-bezier(.55,0,.1,1);

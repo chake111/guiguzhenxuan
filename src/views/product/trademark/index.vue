@@ -61,6 +61,7 @@ import { nextTick, onMounted, reactive, ref } from 'vue';
 import { reqHasTradeMark, reqAddOrUpdateTradeMark, reqDeleteTradeMark } from '@/api/product/trademark';
 import type { Records, TrademarkResponseData, Trademark } from '@/api/product/trademark/type';
 import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router';
 import { Plus } from '@element-plus/icons-vue'
 let pageNo = ref<number>(1);
 let limit = ref<number>(3);
@@ -72,6 +73,9 @@ let trademarkParams = reactive<Trademark>({
   tmName: '',
   logoUrl: ''
 })
+const router = useRouter();
+console.log(router.currentRoute.value.fullPath);
+
 const getHasTradeMark = async (pager = 1) => {
   try {
     pageNo.value = pager;
