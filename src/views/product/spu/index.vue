@@ -13,7 +13,12 @@
               <el-button @click="addSku(row)" type="primary" icon="Plus" size="small" title="添加SKU"></el-button>
               <el-button @click="updateSpu(row)" type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
               <el-button @click="findSku(row)" type="info" icon="InfoFilled" size="small" title="查看SKU列表"></el-button>
-              <el-button type="danger" icon="Delete" size="small" title="删除SPU"></el-button>
+              <el-popconfirm :title="`你确定要删除${row.spuName}吗?`" width="250px" icon="Delete"
+                @confirm="deleteSpu(row)">
+                <template #reference>
+                  <el-button type="danger" size="small" icon="Delete"></el-button>
+                </template>
+              </el-popconfirm>
             </template>
           </el-table-column>
         </el-table>
@@ -41,7 +46,7 @@
 
 <script setup lang='ts'>
 import type { HasSpuResponseData, Records, SkuData, SkuInfoData, SpuData } from "@/api/product/spu/type";
-import { reqHasSpu, reqSkuList } from "@/api/product/spu/index";
+import { reqHasSpu, reqRemoveSpu, reqSkuList } from "@/api/product/spu/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
 import { onMounted, ref, watch } from "vue";
@@ -145,16 +150,26 @@ const findSku = async (row: SpuData) => {
     ElMessage.error('SPU ID 不能为空');
     return;
   }
-  console.log('row:',row.id);
+  console.log('row:', row.id);
 
   const result: SkuInfoData = await reqSkuList(row.id);
-  console.log('result:',result);
+  console.log('result:', result);
 
   if (result.code == 200) {
     skuArr.value = result.data;
     show.value = true;
   } else {
     ElMessage.error(result.message || '获取SKU列表失败');
+  }
+}
+
+const deleteSpu = async (row: SpuData) => {
+  const result:any = await reqRemoveSpu((row.id as number));
+  if (result.code == 200) {
+    ElMessage.success('删除成功');
+    await getHasSpu(pageNo.value);
+  }else{
+    ElMessage.error(result.message || '删除失败');
   }
 }
 </script>

@@ -333,6 +333,74 @@ export default [
       }
     },
   },
+  // 删除SPU接口
+  {
+    url: /\/admin\/product\/deleteSpu\/(\d+)$/,
+    method: 'delete',
+    response: ({ url }: { url: string }) => {
+      const match = url.match(/\/admin\/product\/deleteSpu\/(\d+)$/);
+      if (!match) {
+        return {
+          code: 400,
+          message: '参数错误',
+          ok: false,
+          data: null
+        };
+      }
+
+      const spuId = parseInt(match[1], 10);
+
+      if (isNaN(spuId)) {
+        return {
+          code: 400,
+          message: 'SPU ID 不是有效数字',
+          ok: false,
+          data: null
+        };
+      }
+
+      // 查找要删除的SPU
+      const spuIndex = typedSpuArr.findIndex(item => item.id === spuId);
+
+      if (spuIndex === -1) {
+        return {
+          code: 404,
+          message: '未找到对应的SPU',
+          ok: false,
+          data: null
+        };
+      }
+
+      // 删除SPU
+      typedSpuArr.splice(spuIndex, 1);
+
+      // 同时删除相关的图片和销售属性数据
+      if (spuImages[spuId]) {
+        delete spuImages[spuId];
+      }
+      if (spuSaleAttrs[spuId]) {
+        delete spuSaleAttrs[spuId];
+      }
+
+      // 删除相关的SKU数据
+      const skuIndexesToRemove = [];
+      for (let i = skuArr.length - 1; i >= 0; i--) {
+        if (skuArr[i].spuId === spuId) {
+          skuIndexesToRemove.push(i);
+        }
+      }
+      skuIndexesToRemove.forEach(index => {
+        skuArr.splice(index, 1);
+      });
+
+      return {
+        code: 200,
+        message: '删除成功',
+        ok: true,
+        data: null
+      };
+    }
+  },
   // 新增SKU接口
   {
     url: '/admin/product/saveSkuInfo',

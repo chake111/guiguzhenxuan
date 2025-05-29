@@ -27,4 +27,5 @@ export const reqAddOrUpdateSpu = (data: SpuData) => {
   }
 }
 export const reqAddSku = (data: SkuData) => request.post<any, any>(API.ADDSKU_URL, data);
-export const reqSkuList = (spuId: number|string) => request.get<any, SkuInfoData>(`${API.SKUINFO}${spuId}`);
+export const reqSkuList = (spuId: number | string) => request.get<any, SkuInfoData>(API.SKUINFO + spuId);
+export const reqRemoveSpu = (spuId: number | string) => request.delete<any, any>(API.REMOVESPU_URL + spuId);
