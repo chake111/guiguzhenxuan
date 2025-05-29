@@ -1762,7 +1762,8 @@ export let skuArr = [
     price: 2999,
     weight: 15800,
     skuDefaultImg: 'https://picsum.photos/seed/tv1/200/200',
-    skuDesc: '55英寸4K超高清，智能语音控制'
+    skuDesc: '55英寸4K超高清，智能语音控制',
+    isSale: 1
   },
   {
     id: 2,
@@ -1771,7 +1772,8 @@ export let skuArr = [
     price: 3099,
     weight: 15800,
     skuDefaultImg: 'https://picsum.photos/seed/tv2/200/200',
-    skuDesc: '55英寸4K超高清，智能语音控制'
+    skuDesc: '55英寸4K超高清，智能语音控制',
+    isSale: 0
   },
   {
     id: 3,
@@ -1780,7 +1782,8 @@ export let skuArr = [
     price: 3999,
     weight: 22500,
     skuDefaultImg: 'https://picsum.photos/seed/tv3/200/200',
-    skuDesc: '120Hz高刷新率，MEMC运动补偿'
+    skuDesc: '120Hz高刷新率，MEMC运动补偿',
+    isSale: 1
   },
   {
     id: 4,
@@ -1789,7 +1792,8 @@ export let skuArr = [
     price: 6999,
     weight: 225,
     skuDefaultImg: 'https://picsum.photos/seed/phone1/200/200',
-    skuDesc: '麒麟9000s芯片，超感知影像系统'
+    skuDesc: '麒麟9000s芯片，超感知影像系统',
+    isSale: 1
   },
   {
     id: 5,
@@ -1798,6 +1802,7 @@ export let skuArr = [
     price: 7999,
     weight: 225,
     skuDefaultImg: 'https://picsum.photos/seed/phone2/200/200',
-    skuDesc: '麒麟9000s芯片，超感知影像系统'
+    skuDesc: '麒麟9000s芯片，超感知影像系统',
+    isSale: 0
   }
 ];

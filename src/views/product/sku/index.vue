@@ -5,7 +5,7 @@
         <el-table-column type="index" label="序号" align="center" width="80px"></el-table-column>
         <el-table-column label="名称" show-overflow-tooltip width="150px" prop="skuName"></el-table-column>
         <el-table-column label="描述" show-overflow-tooltip width="150px" prop="skuDesc"></el-table-column>
-        <el-table-column label="默认图片" width="150px" >
+        <el-table-column label="默认图片" width="150px">
           <template #default="{ row }">
             <el-image :src="row.skuDefaultImg"></el-image>
           </template>
@@ -14,16 +14,17 @@
         <el-table-column label="价格(元)" prop="price"></el-table-column>
         <el-table-column label="操作" width="250px" fixed="right">
           <template #default="{ row, $index }">
-            <el-button type="primary" icon="Top" size="small" title="上架SKU"></el-button>
-            <el-button type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
-            <el-button type="info" icon="InfoFilled" size="small" title="查看SKU列表"></el-button>
+            <el-button @click="updateSale(row)" type="primary" :icon="row.isSale == 1 ? 'Bottom' : 'Top'" size="small"
+              :title="row.isSale == 1 ? '下架SKU' : '上架SKU'"></el-button>
+            <el-button @click="updateSku" type="warning" icon="Edit" size="small" title="修改SKU"></el-button>
+            <el-button @click="checkSku(row)" type="info" icon="InfoFilled" size="small" title="查看SKU详情"></el-button>
             <el-button type="danger" icon="Delete" size="small" title="删除SPU"></el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination @current-change="getHasSku" @size-change="handler" :pager-count="9" v-model:current-page="pageNo" v-model:page-size="limit"
-        :page-sizes="[10, 20, 30, 40]" :background="true" layout="prev, pager, next, jumper,->,sizes,total"
-        :total="total" />
+      <el-pagination @current-change="getHasSku" @size-change="handler" :pager-count="9" v-model:current-page="pageNo"
+        v-model:page-size="limit" :page-sizes="[10, 20, 30, 40]" :background="true"
+        layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
       <el-drawer v-model="drawer" :direction="direction">
         <template #header>
           <h4>查看商品详情</h4>
@@ -70,15 +71,15 @@
 </template>
 
 <script setup lang='ts'>
-import { reqSkuList } from '@/api/product/sku';
+import { reqCancelSale, reqSale, reqSkuList } from '@/api/product/sku';
 import type { SkuResponseData } from '@/api/product/sku/type';
 import type { SkuData } from '@/api/product/spu/type';
-import type { DrawerProps } from 'element-plus';
+import { ElMessage, type DrawerProps } from 'element-plus';
 import { onMounted, ref } from 'vue';
 
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(1);
-let limit = ref<number>(3);
+let limit = ref<number>(10);
 let total = ref<number>(0);
 let drawer = ref<boolean>(false);
 let skuArr = ref<SkuData[]>([]);
@@ -88,7 +89,7 @@ onMounted(() => {
   getHasSku();
 });
 
-const getHasSku = async (pager=1) => {
+const getHasSku = async (pager = 1) => {
   pageNo.value = pager;
   let result: SkuResponseData = await reqSkuList(pageNo.value, limit.value);
   if (result.code == 200) {
@@ -97,8 +98,34 @@ const getHasSku = async (pager=1) => {
   }
 }
 
-const handler = (pageSizes: number) => {
+const handler = () => {
   getHasSku();
+}
+
+const updateSale = async (row: SkuData) => {
+  if (row.isSale == 1) {
+    await reqCancelSale((row.id as number));
+    ElMessage.success('下架成功');
+    getHasSku(pageNo.value);
+  } else {
+    reqSale((row.id as number));
+    ElMessage.success('上架成功');
+    getHasSku(pageNo.value);
+  }
+}
+
+const updateSku = (row: SkuData) => {
+  
+}
+
+const checkSku = async (row: SkuData) => {
+  drawer.value = true;
+  let result: any = await reqSkuInfo((row.id as number));
+  if (result.code == 200) {
+    console.log(result.data);
+  } else {
+    ElMessage.error(result.message || '获取商品详情失败');
+  }
 }
 </script>
 
