@@ -1760,7 +1760,7 @@ export let skuArr = [
     spuId: 1,
     skuName: '海信液晶电视E55 55英寸 黑色',
     price: 2999,
-    weight: 15.8,
+    weight: 15800,
     skuDefaultImg: 'https://picsum.photos/seed/tv1/200/200',
     skuDesc: '55英寸4K超高清，智能语音控制'
   },
@@ -1769,7 +1769,7 @@ export let skuArr = [
     spuId: 1,
     skuName: '海信液晶电视E55 55英寸 银色',
     price: 3099,
-    weight: 15.8,
+    weight: 15800,
     skuDefaultImg: 'https://picsum.photos/seed/tv2/200/200',
     skuDesc: '55英寸4K超高清，智能语音控制'
   },
@@ -1778,7 +1778,7 @@ export let skuArr = [
     spuId: 2,
     skuName: 'TCL液晶电视Q10 65英寸 黑色',
     price: 3999,
-    weight: 22.5,
+    weight: 22500,
     skuDefaultImg: 'https://picsum.photos/seed/tv3/200/200',
     skuDesc: '120Hz高刷新率，MEMC运动补偿'
   },
@@ -1787,7 +1787,7 @@ export let skuArr = [
     spuId: 26,
     skuName: '华为Mate60 Pro 12GB+256GB 黑色',
     price: 6999,
-    weight: 0.225,
+    weight: 225,
     skuDefaultImg: 'https://picsum.photos/seed/phone1/200/200',
     skuDesc: '麒麟9000s芯片，超感知影像系统'
   },
@@ -1796,7 +1796,7 @@ export let skuArr = [
     spuId: 26,
     skuName: '华为Mate60 Pro 12GB+512GB 白色',
     price: 7999,
-    weight: 0.225,
+    weight: 225,
     skuDefaultImg: 'https://picsum.photos/seed/phone2/200/200',
     skuDesc: '麒麟9000s芯片，超感知影像系统'
   }

@@ -32,7 +32,7 @@
         <el-table :data="skuArr" border>
           <el-table-column label="SKU名称" prop="skuName"></el-table-column>
           <el-table-column label="SKU价格" prop="price"></el-table-column>
-          <el-table-column label="SKU重量" prop="weight"></el-table-column>
+          <el-table-column label="SKU重量(克)" prop="weight"></el-table-column>
           <el-table-column label="SKU图片">
             <template #="{ row }">
               <img :src="row.skuDefaultImg" alt="" style="width: 100px; height: 100px;">
