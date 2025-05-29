@@ -3,53 +3,7 @@ import * as spuDataImport from './spuData';
 
 const spuData = spuDataImport;
 const spuArr = spuData.spuArr;
-const skuArr = [
-  {
-    id: 1,
-    spuId: 1,
-    skuName: '海信液晶电视E55 55英寸 黑色',
-    price: 2999,
-    weight: 15.8,
-    skuDefaultImg: 'https://picsum.photos/seed/tv1/200/200',
-    skuDesc: '55英寸4K超高清，智能语音控制'
-  },
-  {
-    id: 2,
-    spuId: 1,
-    skuName: '海信液晶电视E55 55英寸 银色',
-    price: 3099,
-    weight: 15.8,
-    skuDefaultImg: 'https://picsum.photos/seed/tv2/200/200',
-    skuDesc: '55英寸4K超高清，智能语音控制'
-  },
-  {
-    id: 3,
-    spuId: 2,
-    skuName: 'TCL液晶电视Q10 65英寸 黑色',
-    price: 3999,
-    weight: 22.5,
-    skuDefaultImg: 'https://picsum.photos/seed/tv3/200/200',
-    skuDesc: '120Hz高刷新率，MEMC运动补偿'
-  },
-  {
-    id: 4,
-    spuId: 26,
-    skuName: '华为Mate60 Pro 12GB+256GB 黑色',
-    price: 6999,
-    weight: 0.225,
-    skuDefaultImg: 'https://picsum.photos/seed/phone1/200/200',
-    skuDesc: '麒麟9000s芯片，超感知影像系统'
-  },
-  {
-    id: 5,
-    spuId: 26,
-    skuName: '华为Mate60 Pro 12GB+512GB 白色',
-    price: 7999,
-    weight: 0.225,
-    skuDefaultImg: 'https://picsum.photos/seed/phone2/200/200',
-    skuDesc: '麒麟9000s芯片，超感知影像系统'
-  }
-];
+const skuArr = spuData.skuArr;
 const spuImages = spuData.spuImages;
 const spuSaleAttrs = spuData.spuSaleAttrs;
 const allSaleAttr = spuData.allSaleAttr;
@@ -61,17 +15,60 @@ interface SpuItem {
   description: string;
   category3Id: number;
   tmId: number;
-  spuSaleAttrList: any;
-  spuImageList: any;
+  spuSaleAttrList: Array<{
+    baseSaleAttrId: number;
+    saleAttrName: string;
+    spuSaleAttrValueList: Array<{
+      saleAttrValueName: string;
+      id?: number;
+      spuId?: number;
+      baseSaleAttrId?: number;
+    }>;
+    id?: number;
+    spuId?: number;
+  }>;
+  spuImageList: Array<{
+    id?: number;
+    imgName?: string;
+    imgUrl: string;
+    spuId?: number;
+  }>;
 }
 const typedSpuArr: SpuItem[] = ([] as SpuItem[]).concat(...spuArr);
 
 
+// 将SKU列表接口移到SPU列表接口之前
 export default [
+  // 查看SKU列表 - 放在前面，避免被其他接口匹配
+  {
+    url: '/admin/product/findBySpuId/:spuId',
+    method: 'get',
+    response: ({ query }: { query: { spuId: string } }) => {
+      const spuId = parseInt(query.spuId, 10);
+
+      if (isNaN(spuId)) {
+        return { code: 400, message: `SPU ID "${query.spuId}" 不是有效数字`, ok: false, data: null };
+      }
+
+      const filteredSkus = skuArr.filter(sku => sku.spuId === spuId);
+
+      if (filteredSkus.length > 0) {
+        return {
+          code: 200,
+          message: '成功',
+          ok: true,
+          data: filteredSkus,
+        };
+      } else {
+        return { code: 404, message: `未找到SPU ID ${spuId}对应的SKU列表`, ok: false, data: null };
+      }
+    },
+  },
+  // SPU列表接口 - 放在后面
   {
     url: '/admin/product/:page/:limit',
     method: 'get',
-    response: ({ query, params, url }: any) => {
+    response: ({ query, params, url }: { query: Record<string, string>; params: { page?: string; limit?: string }; url: string }) => {
       let page = 1;
       let limit = 10;
       let category3Id: number | undefined;
@@ -194,13 +191,13 @@ export default [
         !Array.isArray(body.spuSaleAttrList) ||
         body.spuSaleAttrList.length === 0 ||
         body.spuSaleAttrList.some(
-          (attr: any) =>
+          (attr: { baseSaleAttrId: number; saleAttrName: string; spuSaleAttrValueList: Array<{ saleAttrValueName: string }> }) =>
             !attr.baseSaleAttrId ||
             !attr.saleAttrName ||
             !Array.isArray(attr.spuSaleAttrValueList) ||
             attr.spuSaleAttrValueList.length === 0 ||
             attr.spuSaleAttrValueList.some(
-              (val: any) =>
+              (val: { saleAttrValueName: string }) =>
                 !val.saleAttrValueName ||
                 typeof val.saleAttrValueName !== 'string' ||
                 !val.saleAttrValueName.trim()
@@ -258,18 +255,17 @@ export default [
           data: null
         };
       }
-      // 校验spuSaleAttrList必须为非空数组且每项合法
       if (
         !Array.isArray(body.spuSaleAttrList) ||
         body.spuSaleAttrList.length === 0 ||
         body.spuSaleAttrList.some(
-          (attr: any) =>
+          (attr: { baseSaleAttrId: number; saleAttrName: string; spuSaleAttrValueList: Array<{ saleAttrValueName: string }> }) =>
             !attr.baseSaleAttrId ||
             !attr.saleAttrName ||
             !Array.isArray(attr.spuSaleAttrValueList) ||
             attr.spuSaleAttrValueList.length === 0 ||
             attr.spuSaleAttrValueList.some(
-              (val: any) =>
+              (val: { saleAttrValueName: string }) =>
                 !val.saleAttrValueName ||
                 typeof val.saleAttrValueName !== 'string' ||
                 !val.saleAttrValueName.trim()
@@ -311,6 +307,31 @@ export default [
         };
       }
     }
+  },
+  // 查看SKU列表
+  {
+    url: '/admin/product/findBySpuId/:spuId',
+    method: 'get',
+    response: ({ query }: { query: { spuId: string } }) => {
+      const spuId = parseInt(query.spuId, 10);
+
+      if (isNaN(spuId)) {
+        return { code: 400, message: `SPU ID "${query.spuId}" 不是有效数字`, ok: false, data: null };
+      }
+
+      const filteredSkus = skuArr.filter(sku => sku.spuId === spuId);
+
+      if (filteredSkus.length > 0) {
+        return {
+          code: 200,
+          message: '成功',
+          ok: true,
+          data: filteredSkus,
+        };
+      } else {
+        return { code: 404, message: `未找到SPU ID ${spuId}对应的SKU列表`, ok: false, data: null };
+      }
+    },
   },
   // 新增SKU接口
   {
@@ -365,18 +386,4 @@ export default [
       };
     }
   },
-  //获取SKU列表
-  {
-    url: '/admin/product/findBySpuId/:spuId',
-    method: 'get',
-    response: () => {
-      return {
-        code: 200,
-        message: '获取成功',
-        ok: true,
-        data: skuArr
-      };
-    }
-  },
 ] as MockMethod[];
-

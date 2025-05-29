@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang='ts'>
-import type { HasSpuResponseData, Records, SkuData, SpuData } from "@/api/product/spu/type";
+import type { HasSpuResponseData, Records, SkuData, SkuInfoData, SpuData } from "@/api/product/spu/type";
 import { reqHasSpu, reqSkuList } from "@/api/product/spu/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
@@ -49,16 +49,16 @@ import SpuForm from "./spuForm.vue";
 import SkuForm from "./skuForm.vue";
 import { ElMessage } from "element-plus";
 
-let pageNo = ref<number>(1);
-let limit = ref<number>(3);
-let scene = ref<number>(0);
-let total = ref<number>(2);
-let categoryStore = useCategoryStore();
-let records = ref<Records>([]);
-let spu = ref<any>();
-let sku = ref<any>();
-let skuArr = ref<SkuData[]>([]);
-let show = ref<boolean>(false);
+const pageNo = ref<number>(1);
+const limit = ref<number>(3);
+const scene = ref<number>(0);
+const total = ref<number>(2);
+const categoryStore = useCategoryStore();
+const records = ref<Records>([]);
+const spu = ref<any>();
+const sku = ref<any>();
+const skuArr = ref<SkuData[]>([]);
+const show = ref<boolean>(false);
 
 watch(() => categoryStore.c3Id, () => {
   if (!categoryStore.c3Id) {
@@ -75,7 +75,7 @@ const getHasSpu = async (pager = 1) => {
     return;
   }
   pageNo.value = pager;
-  let result: HasSpuResponseData = await reqHasSpu(pageNo.value, limit.value, categoryStore.c3Id);
+  const result: HasSpuResponseData = await reqHasSpu(pageNo.value, limit.value, categoryStore.c3Id);
   if (result.code == 200 && result.data) {
     records.value = result.data.records || [];
     total.value = result.data.total || 0;
@@ -123,7 +123,7 @@ const changeScene = async (num: number, isAdd = false) => {
       return;
     }
     if (isAdd) {
-      let result: HasSpuResponseData = await reqHasSpu(1, limit.value, categoryStore.c3Id);
+      const result: HasSpuResponseData = await reqHasSpu(1, limit.value, categoryStore.c3Id);
       if (result.code == 200 && result.data) {
         const totalCount = result.data.total || 0;
         const lastPage = Math.max(1, Math.ceil(totalCount / limit.value));
@@ -141,10 +141,14 @@ const addSku = (row: SpuData) => {
 }
 
 const findSku = async (row: SpuData) => {
-  console.log(row.id);
+  if (!row.id) {
+    ElMessage.error('SPU ID 不能为空');
+    return;
+  }
+  console.log('row:',row.id);
 
-  let result = await reqSkuList((row.id as number));
-  console.log(result);
+  const result: SkuInfoData = await reqSkuList(row.id);
+  console.log('result:',result);
 
   if (result.code == 200) {
     skuArr.value = result.data;
