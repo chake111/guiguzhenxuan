@@ -21,16 +21,15 @@
       </el-col>
     </el-row>
 
-    <!-- 高频操作快捷入口 -->
     <el-card class="quick-actions" style="margin-top:24px;">
       <template #header>
         <span>快捷操作</span>
       </template>
       <el-space>
-        <el-button type="primary" icon="el-icon-s-order">订单处理</el-button>
-        <el-button type="success" icon="el-icon-goods">商品管理</el-button>
-        <el-button type="warning" icon="el-icon-present">活动配置</el-button>
-        <el-button type="info" icon="el-icon-message">客服工单</el-button>
+        <el-button type="primary" icon="el-icon-s-order" @click="handleQuickAction('订单处理')">订单处理</el-button>
+        <el-button type="success" icon="el-icon-goods" @click="handleQuickAction('商品管理')">商品管理</el-button>
+        <el-button type="warning" icon="el-icon-present" @click="handleQuickAction('活动配置')">活动配置</el-button>
+        <el-button type="info" icon="el-icon-message" @click="handleQuickAction('客服工单')">客服工单</el-button>
       </el-space>
     </el-card>
 
@@ -87,6 +86,7 @@ import VChart from 'vue-echarts'
 import { CanvasRenderer } from 'echarts/renderers'
 import { LineChart, BarChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent, TitleComponent } from 'echarts/components'
+import { useRouter } from 'vue-router'
 
 use([
   CanvasRenderer,
@@ -98,34 +98,16 @@ use([
   TitleComponent
 ])
 
-// mock数据兜底
-const mockOverview = [
-  { label: '今日销售额', value: '￥0' },
-  { label: '订单量', value: '0' },
-  { label: '客单价', value: '￥0' },
-  { label: '转化率', value: '0%' }
-]
-const mockMonitor = {
-  lowStock: 0,
-  abnormalOrder: 0,
-  delayDelivery: 0
-}
-const mockTasks = [
-  { type: '紧急', desc: '无' },
-  { type: '常规', desc: '无' },
-  { type: '长期任务', desc: '无' }
-]
-const mockMessages = [
-  { content: '暂无新通知' }
-]
+const mockOverview = []
+const mockMonitor = {}
+const mockTasks = []
+const mockMessages = []
 
-// 响应式数据
 const overviewCards = ref([...mockOverview])
 const monitorData = ref({ ...mockMonitor })
 const tasks = ref([...mockTasks])
 const messages = ref([...mockMessages])
 
-// 销售趋势图 mock
 const trendOption = ref({
   title: { text: '近7天销售趋势', left: 'center', top: 10, textStyle: { fontSize: 14 } },
   tooltip: { trigger: 'axis' },
@@ -142,7 +124,6 @@ const trendOption = ref({
   ]
 })
 
-// 品类/渠道对比图 mock
 const categoryOption = ref({
   title: { text: '品类销售对比', left: 'center', top: 10, textStyle: { fontSize: 14 } },
   tooltip: { trigger: 'axis' },
@@ -163,10 +144,8 @@ const categoryOption = ref({
   ]
 })
 
-// 获取dashboard数据
 async function getDashboardData() {
   try {
-    // 假设有接口 /api/dashboard/overview
     const res = await axios.get('/api/dashboard/overview')
     if (res.data && res.data.code === 200) {
       overviewCards.value = res.data.data.overview || mockOverview
@@ -174,14 +153,12 @@ async function getDashboardData() {
       tasks.value = res.data.data.tasks || mockTasks
       messages.value = res.data.data.messages || mockMessages
     } else {
-      // 用mock兜底
       overviewCards.value = [...mockOverview]
       monitorData.value = { ...mockMonitor }
       tasks.value = [...mockTasks]
       messages.value = [...mockMessages]
     }
   } catch (e) {
-    // 网络异常也用mock兜底
     overviewCards.value = [...mockOverview]
     monitorData.value = { ...mockMonitor }
     tasks.value = [...mockTasks]
@@ -189,9 +166,31 @@ async function getDashboardData() {
   }
 }
 
+const router = useRouter()
+
+function handleQuickAction(action: string) {
+  let path = ''
+  switch (action) {
+    case '订单处理':
+      path = '/orders'
+      break
+    case '商品管理':
+      path = '/product'
+      break
+    case '活动配置':
+      path = '/activities'
+      break
+    case '客服工单':
+      path = '/tickets'
+      break
+    default:
+      return
+  }
+  router.push(path)
+}
+
 onMounted(() => {
   getDashboardData()
-  // 若有接口可在此请求趋势和对比数据并赋值到trendOption/categoryOption
 })
 </script>
 
@@ -227,7 +226,6 @@ onMounted(() => {
 .chart-echarts {
   width: 100%;
   aspect-ratio: 2 / 1;
-  /* 保持宽高比为2:1，防止拉伸变形 */
   min-width: 0;
   min-height: 180px;
   max-height: 320px;

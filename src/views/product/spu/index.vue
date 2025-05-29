@@ -12,7 +12,7 @@
             <template #="{ row, $index }">
               <el-button @click="addSku(row)" type="primary" icon="Plus" size="small" title="添加SKU"></el-button>
               <el-button @click="updateSpu(row)" type="warning" icon="Edit" size="small" title="修改SPU"></el-button>
-              <el-button type="info" icon="InfoFilled" size="small" title="查看SKU列表"></el-button>
+              <el-button @click="findSku(row)" type="info" icon="InfoFilled" size="small" title="查看SKU列表"></el-button>
               <el-button type="danger" icon="Delete" size="small" title="删除SPU"></el-button>
             </template>
           </el-table-column>
@@ -23,12 +23,24 @@
       </div>
       <SpuForm ref="spu" @changeScene="changeScene" v-show="scene == 1 ? true : false"></SpuForm>
       <SkuForm ref="sku" @changeScene="changeScene" v-show="scene == 2 ? true : false"></SkuForm>
+      <el-dialog v-model="show" title="SKU列表">
+        <el-table :data="skuArr" border>
+          <el-table-column label="SKU名称" prop="skuName"></el-table-column>
+          <el-table-column label="SKU价格" prop="price"></el-table-column>
+          <el-table-column label="SKU重量" prop="weight"></el-table-column>
+          <el-table-column label="SKU图片">
+            <template #="{ row }">
+              <img :src="row.skuDefaultImage" alt="" style="width: 100px; height: 100px;">
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script setup lang='ts'>
-import type { HasSpuResponseData, Records, SpuData } from "@/api/product/spu/type";
+import type { HasSpuResponseData, Records, SkuData, SpuData } from "@/api/product/spu/type";
 import { reqHasSpu } from "@/api/product/spu/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
@@ -45,6 +57,8 @@ let categoryStore = useCategoryStore();
 let records = ref<Records>([]);
 let spu = ref<any>();
 let sku = ref<any>();
+let skuArr = ref<SkuData[]>([]);
+let show = ref<boolean>(true);
 
 watch(() => categoryStore.c3Id, () => {
   if (!categoryStore.c3Id) {
@@ -124,6 +138,16 @@ const changeScene = async (num: number, isAdd = false) => {
 const addSku = (row:SpuData) => {
   sku.value.initSkuData(categoryStore.c1Id,categoryStore.c2Id,row);
   scene.value = 2;
+}
+
+const findSku = (row:SpuData) => {
+  let result = sku.value.findSkuBySpuId(row.id);
+  if (result.code == 200) {
+    skuArr.value = result.data;
+    show.value = true;
+  } else {
+    ElMessage.error(result.message);
+  }
 }
 </script>
 
