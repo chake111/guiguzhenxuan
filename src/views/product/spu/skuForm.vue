@@ -85,7 +85,17 @@ const cancel = () => {
   $emit('changeScene', 0);
 }
 
-const initSkuData = async (c1Id: number | string, c2Id: number | string, spu: SpuData) => {
+const initSkuData = async (c1Id: number | string, c2Id: number | string, spu: SpuData, isAdd:boolean) => {
+  if (isAdd) {
+    skuParams.skuName = spu.spuName;
+    skuParams.price = '';
+    skuParams.weight = '';
+    skuParams.skuDesc = '';
+    skuParams.skuAttrValueList = [];
+    skuParams.skuSaleAttrValueList = [];
+    skuParams.skuDefaultImg = '';
+  return;
+  }
   skuParams.category3Id = spu.category3Id;
   skuParams.spuId = (spu.id as number | string);
   skuParams.tmId = spu.tmId;

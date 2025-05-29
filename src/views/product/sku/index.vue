@@ -66,6 +66,13 @@
         <template #footer>
         </template>
       </el-drawer>
+      <el-dialog v-model="dialogFormVisible" title="修改SKU">
+        <SkuForm ref="sku"></SkuForm>
+        <template #footer>
+          <el-button type="default" size="default" @click="cancel">取消</el-button>
+          <el-button type="primary" size="default" @click="confirm">确定</el-button>
+        </template>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -76,6 +83,8 @@ import type { SkuResponseData } from '@/api/product/sku/type';
 import type { SkuData } from '@/api/product/spu/type';
 import { ElMessage, type DrawerProps } from 'element-plus';
 import { onMounted, ref } from 'vue';
+import SkuForm from '../spu/skuForm.vue';
+import { useCategoryStore } from '@/stores/modules/Category';
 
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(1);
@@ -84,6 +93,10 @@ let total = ref<number>(0);
 let drawer = ref<boolean>(false);
 let skuArr = ref<SkuData[]>([]);
 const direction = ref<DrawerProps['direction']>('rtl');
+let dialogFormVisible = ref<boolean>(false);
+
+let sku = ref<any>();
+let categoryStore = useCategoryStore();
 
 onMounted(() => {
   getHasSku();
@@ -115,7 +128,9 @@ const updateSale = async (row: SkuData) => {
 }
 
 const updateSku = (row: SkuData) => {
-  
+  dialogFormVisible.value = true;
+  skuInfo.value = row;
+  sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row,ture);
 }
 
 const checkSku = async (row: SkuData) => {
@@ -126,6 +141,14 @@ const checkSku = async (row: SkuData) => {
   } else {
     ElMessage.error(result.message || '获取商品详情失败');
   }
+}
+
+const cancel = () => {
+  dialogFormVisible.value = false;
+}
+
+const confirm = () => {
+  dialogFormVisible.value = false;
 }
 </script>
 
