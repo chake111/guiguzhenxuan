@@ -30,7 +30,7 @@
           <el-table-column label="SKU重量" prop="weight"></el-table-column>
           <el-table-column label="SKU图片">
             <template #="{ row }">
-              <img :src="row.skuDefaultImage" alt="" style="width: 100px; height: 100px;">
+              <img :src="row.skuDefaultImg" alt="" style="width: 100px; height: 100px;">
             </template>
           </el-table-column>
         </el-table>
@@ -41,7 +41,7 @@
 
 <script setup lang='ts'>
 import type { HasSpuResponseData, Records, SkuData, SpuData } from "@/api/product/spu/type";
-import { reqHasSpu } from "@/api/product/spu/index";
+import { reqHasSpu, reqSkuList } from "@/api/product/spu/index";
 import Category from "@/components/Category/index.vue";
 import { useCategoryStore } from "@/stores/modules/Category";
 import { onMounted, ref, watch } from "vue";
@@ -58,7 +58,7 @@ let records = ref<Records>([]);
 let spu = ref<any>();
 let sku = ref<any>();
 let skuArr = ref<SkuData[]>([]);
-let show = ref<boolean>(true);
+let show = ref<boolean>(false);
 
 watch(() => categoryStore.c3Id, () => {
   if (!categoryStore.c3Id) {
@@ -135,18 +135,22 @@ const changeScene = async (num: number, isAdd = false) => {
     }
   }
 }
-const addSku = (row:SpuData) => {
-  sku.value.initSkuData(categoryStore.c1Id,categoryStore.c2Id,row);
+const addSku = (row: SpuData) => {
+  sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row);
   scene.value = 2;
 }
 
-const findSku = (row:SpuData) => {
-  let result = sku.value.findSkuBySpuId(row.id);
+const findSku = async (row: SpuData) => {
+  console.log(row.id);
+
+  let result = await reqSkuList((row.id as number));
+  console.log(result);
+
   if (result.code == 200) {
     skuArr.value = result.data;
     show.value = true;
   } else {
-    ElMessage.error(result.message);
+    ElMessage.error(result.message || '获取SKU列表失败');
   }
 }
 </script>

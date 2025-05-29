@@ -3,6 +3,53 @@ import * as spuDataImport from './spuData';
 
 const spuData = spuDataImport;
 const spuArr = spuData.spuArr;
+const skuArr = [
+  {
+    id: 1,
+    spuId: 1,
+    skuName: '海信液晶电视E55 55英寸 黑色',
+    price: 2999,
+    weight: 15.8,
+    skuDefaultImg: 'https://picsum.photos/seed/tv1/200/200',
+    skuDesc: '55英寸4K超高清，智能语音控制'
+  },
+  {
+    id: 2,
+    spuId: 1,
+    skuName: '海信液晶电视E55 55英寸 银色',
+    price: 3099,
+    weight: 15.8,
+    skuDefaultImg: 'https://picsum.photos/seed/tv2/200/200',
+    skuDesc: '55英寸4K超高清，智能语音控制'
+  },
+  {
+    id: 3,
+    spuId: 2,
+    skuName: 'TCL液晶电视Q10 65英寸 黑色',
+    price: 3999,
+    weight: 22.5,
+    skuDefaultImg: 'https://picsum.photos/seed/tv3/200/200',
+    skuDesc: '120Hz高刷新率，MEMC运动补偿'
+  },
+  {
+    id: 4,
+    spuId: 26,
+    skuName: '华为Mate60 Pro 12GB+256GB 黑色',
+    price: 6999,
+    weight: 0.225,
+    skuDefaultImg: 'https://picsum.photos/seed/phone1/200/200',
+    skuDesc: '麒麟9000s芯片，超感知影像系统'
+  },
+  {
+    id: 5,
+    spuId: 26,
+    skuName: '华为Mate60 Pro 12GB+512GB 白色',
+    price: 7999,
+    weight: 0.225,
+    skuDefaultImg: 'https://picsum.photos/seed/phone2/200/200',
+    skuDesc: '麒麟9000s芯片，超感知影像系统'
+  }
+];
 const spuImages = spuData.spuImages;
 const spuSaleAttrs = spuData.spuSaleAttrs;
 const allSaleAttr = spuData.allSaleAttr;
@@ -109,7 +156,7 @@ export default [
       };
     }
   },
-  // mock图片上传接口
+  // 图片上传接口
   {
     url: '/admin/product/fileUpLoad',
     method: 'post',
@@ -123,7 +170,7 @@ export default [
       }
     }
   },
-  // mock 新增SPU接口
+  // 新增SPU接口
   {
     url: '/admin/product/saveSpuInfo',
     method: 'post',
@@ -198,7 +245,7 @@ export default [
       };
     }
   },
-  // mock 更新SPU接口
+  // 更新SPU接口
   {
     url: '/admin/product/updateSpuInfo',
     method: 'post',
@@ -265,7 +312,7 @@ export default [
       }
     }
   },
-  // mock 新增SKU接口
+  // 新增SKU接口
   {
     url: '/admin/product/saveSkuInfo',
     method: 'post',
@@ -292,7 +339,6 @@ export default [
           data: null
         };
       }
-      // 生成新id
       const maxId = spuData.skuArr && spuData.skuArr.length > 0 ? Math.max(...spuData.skuArr.map(item => item.id)) : 0;
       const newId = maxId + 1;
       if (spuData.skuArr && spuData.skuArr.some(item => item.id === newId)) {
@@ -318,6 +364,19 @@ export default [
         data: null
       };
     }
-  }
+  },
+  //获取SKU列表
+  {
+    url: '/admin/product/findBySpuId/:spuId',
+    method: 'get',
+    response: () => {
+      return {
+        code: 200,
+        message: '获取成功',
+        ok: true,
+        data: skuArr
+      };
+    }
+  },
 ] as MockMethod[];
 
