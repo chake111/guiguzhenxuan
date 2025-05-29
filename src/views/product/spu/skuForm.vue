@@ -62,12 +62,12 @@ import type { SaleAttrResponse, SkuData, SpuData, SpuHasImg } from '@/api/produc
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue';
 
-let $emit = defineEmits(['changeScene']);
-let select = ref<boolean>(true)
-let attrArr = ref<any>();
-let saleArr = ref<any>();
-let imgArr = ref<any>();
-let skuParams = reactive<SkuData>({
+const $emit = defineEmits(['changeScene']);
+const select = ref<boolean>(true)
+const attrArr = ref<any>();
+const saleArr = ref<any>();
+const imgArr = ref<any>();
+const skuParams = reactive<SkuData>({
   category3Id: '',
   spuId: '',
   tmId: '',
@@ -79,34 +79,80 @@ let skuParams = reactive<SkuData>({
   skuSaleAttrValueList: [],
   skuDefaultImg: '',
 });
-let table = ref<any>();
+const table = ref<any>();
 
 const cancel = () => {
   $emit('changeScene', 0);
 }
 
-const initSkuData = async (c1Id: number | string, c2Id: number | string, spu: SpuData, isAdd:boolean) => {
+const initSkuData = async (c1Id: number | string, c2Id: number | string, spu: SpuData, isAdd: boolean, existingSkuData?: SkuData) => {
+  // 设置基本信息
+  skuParams.category3Id = spu.category3Id;
+  skuParams.spuId = (spu.id as number | string);
+  skuParams.tmId = spu.tmId;
+
   if (isAdd) {
-    skuParams.skuName = spu.spuName;
+    // 新增模式：清空表单
+    skuParams.skuName = '';
     skuParams.price = '';
     skuParams.weight = '';
     skuParams.skuDesc = '';
     skuParams.skuAttrValueList = [];
     skuParams.skuSaleAttrValueList = [];
     skuParams.skuDefaultImg = '';
-  return;
+  } else if (existingSkuData) {
+    // 修改模式：回显数据
+    skuParams.id = existingSkuData.id;
+    skuParams.skuName = existingSkuData.skuName;
+    skuParams.price = existingSkuData.price;
+    skuParams.weight = existingSkuData.weight;
+    skuParams.skuDesc = existingSkuData.skuDesc;
+    skuParams.skuDefaultImg = existingSkuData.skuDefaultImg;
+    skuParams.skuAttrValueList = existingSkuData.skuAttrValueList || [];
+    skuParams.skuSaleAttrValueList = existingSkuData.skuSaleAttrValueList || [];
   }
-  skuParams.category3Id = spu.category3Id;
-  skuParams.spuId = (spu.id as number | string);
-  skuParams.tmId = spu.tmId;
 
-  let result: AttrResponseData = await reqAttr(c1Id, c2Id, spu.category3Id);
-  let result1: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
-  let result2: SpuHasImg = await reqSpuImageList((spu.id as number));
+  // 获取属性和图片数据
+  const result: AttrResponseData = await reqAttr(c1Id, c2Id, spu.category3Id);
+  const result1: SaleAttrResponse = await reqSpuHasSaleAttr((spu.id as number));
+  const result2: SpuHasImg = await reqSpuImageList((spu.id as number));
 
   attrArr.value = result.data;
   saleArr.value = result1.data;
   imgArr.value = result2.data;
+
+  // 如果是修改模式，需要回显选中的属性值
+  if (!isAdd && existingSkuData) {
+    // 回显平台属性选择
+    if (existingSkuData.skuAttrValueList) {
+      existingSkuData.skuAttrValueList.forEach((attr: any) => {
+        const foundAttr = attrArr.value.find((item: any) => item.id == attr.attrId);
+        if (foundAttr) {
+          foundAttr.attrIdAndValueId = `${attr.attrId}:${attr.valueId}`;
+        }
+      });
+    }
+
+    // 回显销售属性选择
+    if (existingSkuData.skuSaleAttrValueList) {
+      existingSkuData.skuSaleAttrValueList.forEach((saleAttr: any) => {
+        const foundSaleAttr = saleArr.value.find((item: any) => item.id == saleAttr.saleAttrId);
+        if (foundSaleAttr) {
+          foundSaleAttr.saleIdAndValueId = `${saleAttr.saleAttrId}:${saleAttr.saleAttrValueId}`;
+        }
+      });
+    }
+
+    // 回显默认图片选择
+    if (existingSkuData.skuDefaultImg) {
+      const defaultImg = imgArr.value.find((img: any) => img.imgUrl === existingSkuData.skuDefaultImg);
+      if (defaultImg) {
+        setTimeout(() => {
+          table.value?.toggleRowSelection(defaultImg, true);
+        }, 100);
+      }
+    }
+  }
 }
 
 const handler = (row: any) => {
@@ -120,7 +166,7 @@ const handler = (row: any) => {
 const save = async () => {
   skuParams.skuAttrValueList = attrArr.value.reduce((prev: any, next: any) => {
     if (next.attrIdAndValueId) {
-      let [attrId, valueId] = next.attrIdAndValueId.split(':');
+      const [attrId, valueId] = next.attrIdAndValueId.split(':');
       prev.push({
         attrId,
         valueId,
@@ -131,7 +177,7 @@ const save = async () => {
 
   skuParams.skuSaleAttrValueList = saleArr.value.reduce((prev: any, next: any) => {
     if (next.saleIdAndValueId) {
-      let [saleAttrId, saleAttrValueId] = next.saleIdAndValueId.split(':');
+      const [saleAttrId, saleAttrValueId] = next.saleIdAndValueId.split(':');
       prev.push({
         saleAttrId,
         saleAttrValueId,
@@ -140,7 +186,7 @@ const save = async () => {
     return prev;
   }, []);
 
-  let result: any = await reqAddSku(skuParams);
+  const result: any = await reqAddSku(skuParams);
   if (result.code == 200) {
     ElMessage.success('添加SKU成功');
   } else {
@@ -152,7 +198,7 @@ const save = async () => {
   $emit('changeScene', false);
 }
 
-defineExpose({ initSkuData })
+defineExpose({ initSkuData, save })
 </script>
 
 <style></style>

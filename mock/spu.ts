@@ -401,7 +401,7 @@ export default [
       };
     }
   },
-  // 新增SKU接口
+  // 新增/修改SKU接口
   {
     url: '/admin/product/saveSkuInfo',
     method: 'post',
@@ -428,30 +428,59 @@ export default [
           data: null
         };
       }
-      const maxId = spuData.skuArr && spuData.skuArr.length > 0 ? Math.max(...spuData.skuArr.map(item => item.id)) : 0;
-      const newId = maxId + 1;
-      if (spuData.skuArr && spuData.skuArr.some(item => item.id === newId)) {
+
+      // 判断是新增还是修改
+      if (body.id) {
+        // 修改SKU
+        const skuIndex = spuData.skuArr.findIndex(item => item.id === body.id);
+        if (skuIndex === -1) {
+          return {
+            code: 404,
+            message: '未找到对应的SKU',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 更新SKU数据
+        spuData.skuArr[skuIndex] = {
+          ...spuData.skuArr[skuIndex],
+          ...body
+        };
+
         return {
-          code: 409,
-          message: 'ID冲突',
-          ok: false,
+          code: 200,
+          message: '修改成功',
+          ok: true,
+          data: null
+        };
+      } else {
+        // 新增SKU
+        const maxId = spuData.skuArr && spuData.skuArr.length > 0 ? Math.max(...spuData.skuArr.map(item => item.id)) : 0;
+        const newId = maxId + 1;
+        if (spuData.skuArr && spuData.skuArr.some(item => item.id === newId)) {
+          return {
+            code: 409,
+            message: 'ID冲突',
+            ok: false,
+            data: null
+          };
+        }
+        const newSku = {
+          ...body,
+          id: newId,
+        };
+        if (!spuData.skuArr) {
+          spuData.skuArr = [];
+        }
+        spuData.skuArr.push(newSku);
+        return {
+          code: 200,
+          message: '新增成功',
+          ok: true,
           data: null
         };
       }
-      const newSku = {
-        ...body,
-        id: newId,
-      };
-      if (!spuData.skuArr) {
-        spuData.skuArr = [];
-      }
-      spuData.skuArr.push(newSku);
-      return {
-        code: 200,
-        message: '新增成功',
-        ok: true,
-        data: null
-      };
     }
   },
 ] as MockMethod[];

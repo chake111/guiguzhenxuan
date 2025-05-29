@@ -1685,8 +1685,8 @@ export const spuArr = [
   ]
 ];
 
-export let spuImages: Record<number, any[]> = {};
-export let spuSaleAttrs: Record<number, any[]> = {};
+export const spuImages: Record<number, any[]> = {};
+export const spuSaleAttrs: Record<number, any[]> = {};
 
 spuArr.forEach(categoryArr => {
   categoryArr.forEach(item => {
@@ -1754,7 +1754,7 @@ export const allSaleAttr = [
   { id: 2, name: '尺寸' },
   { id: 3, name: '版本' }
 ];
-export let skuArr = [
+export const skuArr = [
   {
     id: 1,
     spuId: 1,
@@ -1765,6 +1765,14 @@ export let skuArr = [
     skuDesc: '55英寸4K超高清，智能语音控制',
     isSale: 1,
     category3Id: 111,
+    skuAttrValueList: [
+      { attrId: 1111, valueId: 11111 },
+      { attrId: 1112, valueId: 11121 }
+    ],
+    skuSaleAttrValueList: [
+      { saleAttrId: 1, saleAttrValueId: 1 },
+      { saleAttrId: 2, saleAttrValueId: 3 }
+    ]
   },
   {
     id: 2,
@@ -1776,6 +1784,14 @@ export let skuArr = [
     skuDesc: '55英寸4K超高清，智能语音控制',
     isSale: 0,
     category3Id: 111,
+    skuAttrValueList: [
+      { attrId: 1111, valueId: 11112 },
+      { attrId: 1112, valueId: 11121 }
+    ],
+    skuSaleAttrValueList: [
+      { saleAttrId: 1, saleAttrValueId: 2 },
+      { saleAttrId: 2, saleAttrValueId: 3 }
+    ]
   },
   {
     id: 3,
@@ -1787,6 +1803,14 @@ export let skuArr = [
     skuDesc: '120Hz高刷新率，MEMC运动补偿',
     isSale: 1,
     category3Id: 111,
+    skuAttrValueList: [
+      { attrId: 1111, valueId: 11111 },
+      { attrId: 1112, valueId: 11122 }
+    ],
+    skuSaleAttrValueList: [
+      { saleAttrId: 1, saleAttrValueId: 1 },
+      { saleAttrId: 2, saleAttrValueId: 3 }
+    ]
   },
   {
     id: 4,
@@ -1798,6 +1822,14 @@ export let skuArr = [
     skuDesc: '麒麟9000s芯片，超感知影像系统',
     isSale: 1,
     category3Id: 211,
+    skuAttrValueList: [
+      { attrId: 2111, valueId: 21111 },
+      { attrId: 2112, valueId: 21121 }
+    ],
+    skuSaleAttrValueList: [
+      { saleAttrId: 1, saleAttrValueId: 1 },
+      { saleAttrId: 3, saleAttrValueId: 5 }
+    ]
   },
   {
     id: 5,
@@ -1809,5 +1841,13 @@ export let skuArr = [
     skuDesc: '麒麟9000s芯片，超感知影像系统',
     isSale: 0,
     category3Id: 211,
+    skuAttrValueList: [
+      { attrId: 2111, valueId: 21112 },
+      { attrId: 2112, valueId: 21122 }
+    ],
+    skuSaleAttrValueList: [
+      { saleAttrId: 1, saleAttrValueId: 2 },
+      { saleAttrId: 3, saleAttrValueId: 6 }
+    ]
   }
 ];
