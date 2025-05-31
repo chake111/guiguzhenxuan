@@ -39,7 +39,7 @@
 import { User, Lock } from '@element-plus/icons-vue'
 import { nextTick, reactive, ref } from 'vue';
 import { useUserStore } from '@/stores/user';
-import type { loginForm } from '@/api/user/type';
+import type { loginForm } from '@/api/acl/user/type';
 import { useRouter, useRoute } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import { getTime } from '@/utils/time';
@@ -102,13 +102,10 @@ const rules = {
     username: [
         { trigger: 'change', required: true, validator: validatorUserName },
         { trigger: 'blur', required: true, message: "账号不能为空" },
-        // { required: true, min: 5, message: "账号长度至少五位", trigger: 'change', },
-        // { required: true,max: 10, message: "账号长度至多十位", trigger: 'change', },
     ],
     password: [
         { trigger: 'change', required: true, validator: validatorPassword },
         { trigger: 'blur', required: true, message: "密码不能为空" },
-        // { required: true, min: 6,max: 15, message: "密码长度限制在六到十五位之间", trigger: 'change', },
     ],
 }
 </script>
