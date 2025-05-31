@@ -2,7 +2,7 @@
   <div>
     <el-card style="height: 60px; margin-bottom: 10px;">
       <el-form :inline="true" class="form">
-        <el-form-item label="用户名">
+        <el-form-item label="用户昵称">
           <el-input v-model="keyword" placeholder="请输入用户名" style="width: 230px;"></el-input>
         </el-form-item>
         <el-form-item>
@@ -42,11 +42,9 @@
             </el-table-column>
           </el-table>
         </el-form-item>
-        <el-form-item>
           <el-pagination @current-change="getHasUser" @size-change="handler" v-model:page-size="pageSize"
             :pager-count="9" v-model:current-page="pageNo" :page-sizes="[5, 7, 9, 11]" :background="true"
             layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
-        </el-form-item>
       </el-form>
     </el-card>
     <el-drawer v-model="drawer">

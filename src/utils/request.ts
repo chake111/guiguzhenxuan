@@ -4,7 +4,7 @@ import { useUserStore } from "@/stores/user";
 
 
 let request = axios.create({
-    baseURL: import.meta.env.VITE_APP_BASE_API, // 始终读取环境变量
+    baseURL: import.meta.env.VITE_APP_BASE_API, 
     timeout: 5000,
 })
 request.interceptors.request.use(

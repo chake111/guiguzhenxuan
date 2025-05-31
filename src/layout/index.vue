@@ -49,7 +49,7 @@ export default {
     height: 100vh;
     background: $base-menu-menu-background;
     transition: width 0.3s cubic-bezier(.55, 0, .1, 1);
-    overflow: hidden; // 防止内容溢出
+    overflow: hidden;
 
     .slider-content {
       height: 100%;

@@ -1,7 +1,7 @@
 import { ref } from "vue";
 import { defineStore } from "pinia";
-import type { loginForm, loginResponseData } from "@/api/user/type";
-import { reqLogin, reqUserInfo } from "@/api/user";
+import type { loginForm, loginResponseData } from "@/api/acl/user/type";
+import { reqLogin, reqUserInfo } from "@/api/acl/user/index";
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from "@/utils/token";
 import { constantRoutes } from "@/router/routes";
 
