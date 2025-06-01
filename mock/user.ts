@@ -1,14 +1,15 @@
 import { mock } from 'node:test';
 import { MockMethod } from 'vite-plugin-mock';
-import  { roles as roles1 } from './role';
+import { reactive } from 'vue';
+import { roles as roles1 } from './role';
 
-// 模拟用户数据
-const users = [
+// 模拟用户数据 - 使用reactive使其响应式
+const users = reactive([
   {
     id: 1,
     username: 'admin',
     password: '111111',
-    name: '超级管理员',
+    name: 'chake1',
     phone: '13800138000',
     roleName: '超级管理员',
     createTime: '2023-01-01 00:00:00',
@@ -18,15 +19,43 @@ const users = [
     id: 2,
     username: 'test111',
     password: '123456',
-    name: '测试用户',
+    name: '张小明',
     phone: '13800138001',
     roleName: '普通用户',
     createTime: '2023-01-02 00:00:00',
     updateTime: '2023-01-02 00:00:00'
+  },
+  {
+    id: 3,
+    username: 'operator',
+    password: '123456',
+    name: '李君颖',
+    phone: '13800138002',
+    roleName: '运营人员',
+    createTime: '2023-01-03 00:00:00',
+    updateTime: '2023-01-03 00:00:00'
+  },
+  {
+    id: 4,
+    username: 'developer',
+    password: '123456',
+    name: '武独秀',
+    phone: '13800138003',
+    roleName: '开发人员',
+    createTime: '2023-01-04 00:00:00',
+    updateTime: '2023-01-04 00:00:00'
   }
-];
+]);
 
-// 模拟角色数据
+// 用户角色关系存储 - 改为存储单个角色ID
+const userRoles = reactive(new Map<number, number>());
+
+// 初始化用户角色关系
+userRoles.set(1, 1); // 超级管理员
+userRoles.set(2, 2); // 普通用户
+userRoles.set(3, 3); // 运营人员
+userRoles.set(4, 6); // 开发人员
+
 const roles = roles1;
 
 export default [
@@ -147,62 +176,190 @@ export default [
     }
   },
 
-  // 更新用户接口
+  // 修复新增用户接口
+  {
+    url: '/admin/acl/user/save',
+    method: 'post',
+    response: ({ body }) => {
+      try {
+        // 验证必填字段
+        if (!body.username || !body.password || !body.name) {
+          return {
+            code: 400,
+            message: '用户名、密码和姓名为必填项',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 检查用户名是否已存在
+        const existingUser = users.find(u => u.username === body.username);
+        if (existingUser) {
+          return {
+            code: 400,
+            message: '用户名已存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        const newUser = {
+          id: Math.max(...users.map(u => u.id)) + 1,
+          username: body.username,
+          password: body.password,
+          name: body.name,
+          phone: body.phone || '',
+          roleName: '',
+          createTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          updateTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        };
+
+        users.push(newUser);
+
+        return {
+          code: 200,
+          message: '新增用户成功',
+          ok: true,
+          data: newUser
+        };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '新增用户失败',
+          ok: false,
+          data: null
+        };
+      }
+    }
+  },
+
+  // 优化更新用户接口
   {
     url: '/admin/acl/user/update',
     method: 'put',
     response: ({ body }) => {
-      const index = users.findIndex(user => user.id === body.id);
-      if (index > -1) {
-        users[index] = { ...users[index], ...body, updateTime: new Date().toISOString() };
+      try {
+        const index = users.findIndex(user => user.id === body.id);
+        if (index === -1) {
+          return {
+            code: 404,
+            message: '用户不存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 检查用户名是否与其他用户冲突
+        const existingUser = users.find(u => u.username === body.username && u.id !== body.id);
+        if (existingUser) {
+          return {
+            code: 400,
+            message: '用户名已存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 更新用户信息（不更新密码）
+        const updatedUser = {
+          ...users[index],
+          username: body.username,
+          name: body.name,
+          phone: body.phone,
+          updateTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        };
+
+        users[index] = updatedUser;
+
         return {
           code: 200,
           message: '更新用户成功',
           ok: true,
-          data: users[index]
+          data: updatedUser
+        };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '更新用户失败',
+          ok: false,
+          data: null
         };
       }
-      return {
-        code: 404,
-        message: '用户不存在',
-        ok: false,
-        data: null
-      };
     }
   },
 
-  // 获取用户角色接口
+  // 优化获取用户角色接口
   {
     url: /\/admin\/acl\/user\/toAssign\/(\d+)/,
     method: 'get',
-    response: () => {
+    response: ({ url }) => {
+      const match = url.match(/\/admin\/acl\/user\/toAssign\/(\d+)/);
+      if (!match) {
+        return {
+          code: 400,
+          message: '请求参数错误',
+          ok: false,
+          data: null
+        };
+      }
+
+      const userId = Number(match[1]);
+      const assignedRoleId = userRoles.get(userId);
+      const assignedRoles = assignedRoleId ? roles.filter(role => role.id === assignedRoleId) : [];
+
       return {
         code: 200,
         message: '获取角色列表成功',
         ok: true,
         data: {
-          assignRoles: [roles[0]],
+          assignRoles: assignedRoles,
           allRolesList: roles
         }
       };
     }
   },
 
-  // 分配用户角色接口
+  // 优化分配用户角色接口
   {
     url: '/admin/acl/user/doAssignRole/',
     method: 'post',
     response: ({ body }) => {
-      const { userId, roleIdList } = body;
-      const userIndex = users.findIndex(user => user.id === userId);
+      try {
+        const { userId, roleId } = body;
 
-      if (userIndex > -1 && roleIdList && roleIdList.length > 0) {
-        // 根据角色ID找到角色名称
-        const assignedRole = roles.find(role => roleIdList.includes(role.id));
-        if (assignedRole) {
-          users[userIndex].roleName = assignedRole.roleName;
-          users[userIndex].updateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        if (!userId) {
+          return {
+            code: 400,
+            message: '用户ID不能为空',
+            ok: false,
+            data: null
+          };
         }
+
+        const userIndex = users.findIndex(user => user.id === userId);
+        if (userIndex === -1) {
+          return {
+            code: 404,
+            message: '用户不存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 存储用户角色关系 - 改为单个角色ID
+        if (roleId) {
+          userRoles.set(userId, roleId);
+          // 更新用户的角色名称显示
+          const assignedRole = roles.find(role => role.id === roleId);
+          if (assignedRole) {
+            users[userIndex].roleName = assignedRole.roleName;
+          }
+        } else {
+          userRoles.delete(userId);
+          users[userIndex].roleName = '';
+        }
+
+        users[userIndex].updateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
 
         return {
           code: 200,
@@ -210,60 +367,100 @@ export default [
           ok: true,
           data: null
         };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '分配角色失败',
+          ok: false,
+          data: null
+        };
       }
-
-      return {
-        code: 400,
-        message: '分配角色失败',
-        ok: false,
-        data: null
-      };
     }
   },
 
-  // 删除用户接口
+  // 优化批量删除用户接口
+  {
+    url: '/admin/acl/user/batchRemove/',
+    method: 'delete',
+    response: ({ body }) => {
+      try {
+        const idList = Array.isArray(body) ? body : [body];
+        let deletedCount = 0;
+
+        // 防止删除超级管理员
+        const filteredIds = idList.filter(id => id !== 1);
+
+        filteredIds.forEach(id => {
+          const index = users.findIndex(user => user.id === id);
+          if (index > -1) {
+            users.splice(index, 1);
+            userRoles.delete(id); // 同时删除角色关系
+            deletedCount++;
+          }
+        });
+
+        return {
+          code: 200,
+          message: `成功删除${deletedCount}个用户`,
+          ok: true,
+          data: null
+        };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '批量删除失败',
+          ok: false,
+          data: null
+        };
+      }
+    }
+  },
+
+  // 优化删除单个用户接口
   {
     url: /\/admin\/acl\/user\/remove\/(\d+)/,
     method: 'delete',
     response: ({ url }) => {
-      const id = Number(url.split('/').pop());
-      const index = users.findIndex(user => user.id === id);
-      if (index > -1) {
+      try {
+        const id = Number(url.split('/').pop());
+
+        // 防止删除超级管理员
+        if (id === 1) {
+          return {
+            code: 400,
+            message: '不能删除超级管理员',
+            ok: false,
+            data: null
+          };
+        }
+
+        const index = users.findIndex(user => user.id === id);
+        if (index === -1) {
+          return {
+            code: 404,
+            message: '用户不存在',
+            ok: false,
+            data: null
+          };
+        }
+
         users.splice(index, 1);
+        userRoles.delete(id); // 同时删除角色关系
+
         return {
           code: 200,
           message: '删除用户成功',
           ok: true,
           data: null
         };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '删除用户失败',
+          ok: false,
+          data: null
+        };
       }
-      return {
-        code: 404,
-        message: '用户不存在',
-        ok: false,
-        data: null
-      };
-    }
-  },
-
-  // 批量删除用户接口
-  {
-    url: '/admin/acl/user/batchRemove/',
-    method: 'delete',
-    response: ({ body }) => {
-      const idList = body;
-      idList.forEach(id => {
-        const index = users.findIndex(user => user.id === id);
-        if (index > -1) {
-          users.splice(index, 1);
-        }
-      });
-      return {
-        code: 200,
-        message: '批量删除成功',
-        ok: true,
-        data: null
-      };
     }
   }
 ] as MockMethod[];

@@ -79,13 +79,14 @@
             <el-input v-model="userParams.name" disabled></el-input>
           </el-form-item>
           <el-form-item label="职位列表">
-            <el-checkbox v-model="checkAll" :indeterminate="isIndeterminate" @change="handlerCheckAllChange">
-              全选
-            </el-checkbox>
-            <el-checkbox-group v-model="userRoleArr" @change="handlerCheckChange">
-              <el-checkbox v-for="(item, index) in allRoleArr" :key="index" :value="item">{{ item.roleName
-              }}</el-checkbox>
-            </el-checkbox-group>
+            <el-select v-model="userRoleId" placeholder="请选择职位" style="width: 100%" clearable>
+              <el-option
+                v-for="item in allRoleArr"
+                :key="item.id"
+                :label="item.roleName"
+                :value="item.id"
+              />
+            </el-select>
           </el-form-item>
         </el-form>
       </template>
@@ -98,7 +99,7 @@
 </template>
 
 <script setup lang='ts'>
-import type { AllRole, AllRoleResponseData, Records, SetRoleData, User, UserResponseData } from '@/api/acl/user/type';
+import type { AllRole, AllRoleResponseData, Records, SetRoleData, User, UserResponseData, RoleData } from '@/api/acl/user/type';
 import { reqAddOrUpdateUser, reqAllRole, reqALLUserInfo, reqRemoveBatchUser, reqRemoveUser, reqSetUserRole } from '@/api/acl/user';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
@@ -111,8 +112,7 @@ let total = ref<number>(0);
 let userArr = ref<Records>([]);
 let drawer = ref<boolean>(false);
 let drawer1 = ref<boolean>(false);
-let checkAll = ref<boolean>(false);
-let userRoleArr = ref<AllRole>([]);
+let userRoleId = ref<number | null>(null);  // 改为单个角色ID
 let allRoleArr = ref<AllRole>([]);
 let isIndeterminate = ref<boolean>(false);
 let selectIdArr = ref<User[]>([]);
@@ -123,6 +123,7 @@ let userParams = reactive<User>({
 });
 let userForm = ref<any>();
 let keyword = ref<string>('');
+
 const validatorUsername = (rule: any, value: string, callback: any) => {
   if (value.trim().length >= 5) {
     callback();
@@ -130,6 +131,7 @@ const validatorUsername = (rule: any, value: string, callback: any) => {
     callback(new Error('用户名称至少五位'));
   }
 };
+
 const validatorName = (rule: any, value: string, callback: any) => {
   if (value.trim().length >= 2) {
     callback();
@@ -137,6 +139,7 @@ const validatorName = (rule: any, value: string, callback: any) => {
     callback(new Error('用户昵称至少两位'));
   }
 };
+
 const validatorPassword = (rule: any, value: string, callback: any) => {
   if (value.trim().length >= 6) {
     callback();
@@ -144,25 +147,29 @@ const validatorPassword = (rule: any, value: string, callback: any) => {
     callback(new Error('用户密码至少六位'));
   }
 };
+
 const rules = {
   username: [{ required: true, trigger: 'blur', validator: validatorUsername }],
   name: [{ required: true, trigger: 'blur', validator: validatorName }],
   password: [{ required: true, trigger: 'blur', validator: validatorPassword }],
 };
 
+// 添加用户功能
 const addUser = () => {
   drawer.value = true;
   Object.assign(userParams, {
-    id: '',
+    id: undefined,
     name: '',
     username: '',
-    password: ''
+    password: '',
+    phone: ''
   });
   nextTick(() => {
-    userForm.value.clearValidate();
+    userForm.value?.clearValidate();
   });
 };
 
+// 更新用户功能
 const updateUser = (row: User) => {
   drawer.value = true;
   Object.assign(userParams, row);
@@ -171,16 +178,28 @@ const updateUser = (row: User) => {
   });
 };
 
+// 删除用户功能
 const deleteUser = async (userId: number) => {
-  let result: any = await reqRemoveUser(userId);
-  if (result.code === 200) {
-    ElMessage.success('删除用户成功');
-    getHasUser(pageNo.value);
-  } else {
+  if (userId === 1) {
+    ElMessage.error('不能删除超级管理员');
+    return;
+  }
+
+  try {
+    const result: any = await reqRemoveUser(userId);
+    if (result.code === 200) {
+      ElMessage.success('删除用户成功');
+      getHasUser(userArr.value.length > 1 ? pageNo.value : Math.max(1, pageNo.value - 1));
+    } else {
+      ElMessage.error(result.message || '删除用户失败');
+    }
+  } catch (error) {
+    console.error('删除用户失败:', error);
     ElMessage.error('删除用户失败');
   }
 };
 
+// 获取用户列表
 const getHasUser = async (pager = 1) => {
   pageNo.value = pager;
   let result: UserResponseData = await reqALLUserInfo(pageNo.value, pageSize.value, keyword.value);
@@ -196,17 +215,87 @@ onMounted(() => {
 
 const handler = () => {
   getHasUser(pageNo.value);
-}
+};
 
-const save = async () => {
-  await userForm.value.validate();
-  let result: any = await reqAddOrUpdateUser(userParams);
-  if (result.code === 200) {
-    drawer.value = false;
-    ElMessage.success(userParams.id ? '更新用户成功' : '添加用户成功');
-    window.location.reload();
+// 搜索功能
+const searchUser = () => {
+  if (keyword.value.trim()) {
+    getHasUser(1);
   } else {
-    ElMessage.error(userParams.id ? '更新用户失败' : '添加用户失败');
+    ElMessage.warning('请输入搜索关键词');
+  }
+};
+
+// 重置功能
+const reset = () => {
+  keyword.value = '';
+  getHasUser(1);
+};
+
+// 保存功能
+const save = async () => {
+  try {
+    await userForm.value.validate();
+
+    const result: any = await reqAddOrUpdateUser(userParams);
+    if (result.code === 200) {
+      drawer.value = false;
+      ElMessage.success(userParams.id ? '更新用户成功' : '添加用户成功');
+      getHasUser(userParams.id ? pageNo.value : 1);
+    } else {
+      ElMessage.error(result.message || '操作失败');
+    }
+  } catch (error) {
+    console.error('保存用户失败:', error);
+    ElMessage.error('保存失败，请检查输入信息');
+  }
+};
+
+// 角色分配
+const setRole = async (row: User) => {
+  drawer1.value = true;
+  Object.assign(userParams, row);
+
+  try {
+    const result: AllRoleResponseData = await reqAllRole(userParams.id as number);
+    if (result.code === 200) {
+      allRoleArr.value = result.data.allRolesList;
+      // 如果有分配的角色，选择第一个，否则设为null
+      userRoleId.value = result.data.assignRoles.length > 0 ? result.data.assignRoles[0].id as number : null;
+    }
+  } catch (error) {
+    console.error('获取角色信息失败:', error);
+    ElMessage.error('获取角色信息失败');
+  }
+};
+
+// 批量删除功能
+const deleteSelectUser = async () => {
+  if (selectIdArr.value.length === 0) {
+    ElMessage.warning('请选择要删除的用户');
+    return;
+  }
+
+  // 检查是否包含超级管理员
+  const hasAdmin = selectIdArr.value.some(user => user.id === 1);
+  if (hasAdmin) {
+    ElMessage.error('不能删除超级管理员');
+    return;
+  }
+
+  try {
+    const idList = selectIdArr.value.map(item => item.id);
+    const result: any = await reqRemoveBatchUser(idList);
+    if (result.code === 200) {
+      ElMessage.success(result.message || '批量删除成功');
+      getHasUser(pageNo.value);
+      selectIdArr.value = [];
+    } else {
+      ElMessage.error(result.message || '批量删除失败');
+    }
+  } catch (error) {
+    console.error('批量删除失败:', error);
+    ElMessage.error('批量删除失败');
   }
 };
 
@@ -214,34 +303,15 @@ const cancel = () => {
   drawer.value = false;
 };
 
-const setRole = async (row: User) => {
-  drawer1.value = true;
-  Object.assign(userParams, row);
-  let result: AllRoleResponseData = await reqAllRole((userParams.id as number));
-  if (result.code == 200) {
-    allRoleArr.value = result.data.allRolesList;
-    userRoleArr.value = result.data.assignRoles;
-    drawer1.value = true;
-  }
-};
-
-const handlerCheckAllChange = (value: boolean) => {
-  userRoleArr.value = value ? allRoleArr.value : [];
-  isIndeterminate.value = false;
-};
-
-const handlerCheckChange = (value: string[]) => {
-  const checkedCount = value.length;
-  checkAll.value = checkedCount === allRoleArr.value.length;
-  isIndeterminate.value = !(checkedCount === allRoleArr.value.length);
-};
-
 const confirmClick = async () => {
+  if (userRoleId.value === null) {
+    ElMessage.warning('请选择一个职位');
+    return;
+  }
+
   let data: SetRoleData = {
     userId: (userParams.id as number),
-    roleIdList: userRoleArr.value.map(item => {
-      return (item.id as number);
-    }),
+    roleId: userRoleId.value, // 改为单个角色ID
   }
   let result: any = await reqSetUserRole(data);
   if (result.code == 200) {
@@ -252,30 +322,8 @@ const confirmClick = async () => {
 };
 
 const selectChange = (selection: any) => {
-  selectIdArr.value = selection.map();
+  selectIdArr.value = selection;
 };
-
-const deleteSelectUser = async () => {
-  let idList: any = selectIdArr.value.map(item => {
-    return item.id;
-  });
-  let result: any = await reqRemoveBatchUser(idList);
-  if (result.code === 200) {
-    ElMessage.success('批量删除用户成功');
-    getHasUser(pageNo.value);
-  } else {
-    ElMessage.error('批量删除用户失败');
-  }
-};
-
-const reset = () => {
-  settingStore.refresh = !settingStore.refresh;
-};
-
-const searchUser = () => {
-  getHasUser();
-  keyword.value = '';
-}
 </script>
 
 <style lang="scss" scoped>

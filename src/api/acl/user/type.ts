@@ -4,6 +4,33 @@ export interface ResponseData {
   ok: boolean;
 }
 
+export interface UserOperationResponse extends ResponseData {
+  data: User | null;
+}
+
+export interface BatchDeleteResponse extends ResponseData {
+  data: null;
+}
+
+
+export interface UserInfo {
+  userId: number;
+  username: string;
+  avatar: string;
+  password: string;
+  desc: string;
+  roles: string[];
+  buttons: string[];
+  routes: string[];
+  token: string;
+}
+
+export interface UserSearchParams {
+  page: number;
+  limit: number;
+  username?: string;
+}
+
 export interface User {
   id?: number;
   createTime?: string;
@@ -46,7 +73,18 @@ export interface UserInfoResponseData extends ResponseData {
   }
 }
 
-interface userInfo {
+// 添加用户操作响应类型
+export interface UserOperationResponse extends ResponseData {
+  data: User | null;
+}
+
+// 添加批量删除响应类型
+export interface BatchDeleteResponse extends ResponseData {
+  data: null;
+}
+
+// 完善用户信息类型
+export interface UserInfo {
   userId: number;
   username: string;
   avatar: string;
@@ -57,12 +95,12 @@ interface userInfo {
   routes: string[];
   token: string;
 }
-interface user {
-  checkUser: userInfo;
-}
-export interface userResponseData {
-  code: number;
-  data: user;
+
+// 添加用户搜索参数类型
+export interface UserSearchParams {
+  page: number;
+  limit: number;
+  username?: string;
 }
 
 export interface RoleData {
@@ -83,6 +121,6 @@ export interface AllRoleResponseData extends ResponseData {
 }
 
 export interface SetRoleData {
-  roleIdList: number[],
+  roleId: number, 
   userId: number;
 }
