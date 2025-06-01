@@ -64,24 +64,10 @@ onMounted(() => {
 });
 
 const getHasPermission = async () => {
-  //  let result:PermissionResponseData =  await reqAllPermission();
-  //   if (result.code === 200) {
-  //       permissionArr.value = result.data;
-  //     }
-  permissionArr.value = [
-    {
-      id: 1, name: '全部数据', code: '', updateTime: '2023-10-01', level: 1, createTime: '2023-10-01', pid: 0, toCode: null, type: 1, status: null, select: true, children: [
-        { id: 2, name: '用户管理', code: 'user_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
-        {
-          id: 3, name: '角色管理', code: 'role_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [
-            { id: 5, name: '角色权限', code: 'role_permission', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
-            { id: 6, name: '角色菜单', code: 'role_menu', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
-          ]
-        },
-        { id: 4, name: '菜单管理', code: 'menu_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
-      ]
-    },
-  ];
+  let result: PermissionResponseData = await reqAllPermission();
+  if (result.code === 200) {
+    permissionArr.value = result.data;
+  }
 }
 
 const addPermission = (row: Permission) => {

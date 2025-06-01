@@ -127,38 +127,14 @@ onMounted(() => {
 
 const getHasRole = async (pager = 1) => {
   pageNo.value = pager;
-  // let result: RoleResponseData = await reqAllRoleList(pager, limit.value, keyword.value);
-  // if (result.code === 200) {
-  //   allRole.value = result.data.records;
-  //   total.value = result.data.total;
-  //   limit.value = result.data.size;
-  //   pageNo.value = result.data.current;
-  // }
-  //模拟数据
-  allRole.value = [
-    {
-      id: 1,
-      roleName: '管理员',
-      createTime: '2021-01-01 10:00:00',
-      updateTime: '2021-01-01 10:00:00',
-      remark: '拥有所有权限'
-    },
-    {
-      id: 2,
-      roleName: '编辑',
-      createTime: '2021-01-01 10:00:00',
-      updateTime: '2021-01-01 10:00:00',
-      remark: '拥有编辑权限'
-    },
-    {
-      id: 3,
-      roleName: '游客',
-      createTime: '2021-01-01 10:00:00',
-      updateTime: '2021-01-01 10:00:00',
-      remark: '拥有查看权限'
-    }
-  ];
-  total.value = allRole.value.length;
+  let result: RoleResponseData = await reqAllRoleList(pager, limit.value, keyword.value);
+  if (result.code === 200) {
+    allRole.value = result.data.records;
+    total.value = result.data.total;
+    limit.value = result.data.size;
+    pageNo.value = result.data.current;
+  }
+
 };
 
 const sizeChange = (size: number) => {
@@ -211,10 +187,10 @@ const save = async () => {
   }
 };
 
-const setPermission = (row: RoleData) => {
+const setPermission = async (row: RoleData) => {
   drawer.value = true;
   Object.assign(RoleParams, row);
-  let result: MenuResponseData = reqAllMenuList((RoleParams.id as number));
+  let result: MenuResponseData = await reqAllMenuList((RoleParams.id as number));
   if (result.code === 200) {
     menuArr.value = result.data;
     selectArr.value = filterSelectedArr(menuArr.value, []);
