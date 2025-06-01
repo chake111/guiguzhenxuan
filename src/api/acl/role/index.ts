@@ -18,5 +18,6 @@ export const reqAddOrUpdateRole = (data: RoleData) => {
   }
 }
 export const reqAllMenuList = (roleId: number) => request.get<any, MenuResponseData>(API.ALLPERMISSION_URL + roleId);
-export const reqSetPermission = (roleId: number, permissionId: number) => request.post<any, any>(API.SETPERMISSION_URL + `roleId=${roleId}&permissionId=${permissionId}`);
+export const reqSetPermission = (roleId: number, permissionId: number[]) =>
+  request.post<any, any>(API.SETPERMISSION_URL + `roleId=${roleId}&permissionId=${permissionId.join(',')}`, permissionId);
 export const reqRemoveRole = (roleId: number) => request.delete<any, any>(API.REMOVEROLE_URL + roleId);

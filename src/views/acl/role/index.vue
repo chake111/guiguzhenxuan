@@ -69,7 +69,7 @@
       </template>
       <template #footer>
         <div style="flex: auto">
-          <el-button @click="">取消</el-button>
+          <el-button @click="drawer = false">取消</el-button>
           <el-button type="primary" @click="handler">确定</el-button>
         </div>
       </template>
@@ -193,7 +193,7 @@ const setPermission = async (row: RoleData) => {
   let result: MenuResponseData = await reqAllMenuList((RoleParams.id as number));
   if (result.code === 200) {
     menuArr.value = result.data;
-    selectArr.value = filterSelectedArr(menuArr.value, []);
+    selectArr.value = filterSelectedArr(result.data, []);
   }
 };
 
@@ -218,7 +218,7 @@ const handler = async () => {
   if (result.code === 200) {
     drawer.value = false;
     ElMessage.success('权限分配成功');
-    window.location.reload();
+    // window.location.reload();
   }
 };
 
@@ -229,6 +229,7 @@ const removeRole = async (row: RoleData) => {
     getHasRole(allRole.value.length > 1 ? pageNo.value : pageNo.value - 1);
   }
 };
+
 </script>
 
 <style lang="scss" scoped>

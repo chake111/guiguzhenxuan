@@ -1,5 +1,6 @@
 import { mock } from 'node:test';
 import { MockMethod } from 'vite-plugin-mock';
+import  { roles as roles1 } from './role';
 
 // 模拟用户数据
 const users = [
@@ -26,10 +27,7 @@ const users = [
 ];
 
 // 模拟角色数据
-const roles = [
-  { id: 1, roleName: '超级管理员', remark: '拥有所有权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
-  { id: 2, roleName: '普通用户', remark: '基础权限', createTime: '2023-01-01', updateTime: '2023-01-01' }
-];
+const roles = roles1;
 
 export default [
   // 登录接口

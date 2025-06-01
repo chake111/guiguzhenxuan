@@ -1,11 +1,24 @@
 import { MockMethod } from 'vite-plugin-mock';
+import { reactive } from 'vue';
 
 // 模拟角色数据
-const roles = [
+export const roles = reactive([
   { id: 1, roleName: '超级管理员', remark: '拥有所有权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
   { id: 2, roleName: '普通用户', remark: '基础权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
-  { id: 3, roleName: '运营人员', remark: '运营相关权限', createTime: '2023-01-01', updateTime: '2023-01-01' }
-];
+  { id: 3, roleName: '运营人员', remark: '运营相关权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
+  { id: 4, roleName: 'VIP用户', remark: 'VIP用户权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
+  { id: 5, roleName: '测试用户', remark: '测试用户权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
+  { id: 6, roleName: '开发人员', remark: '开发相关权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
+  { id: 7, roleName: '客服人员', remark: '客服相关权限', createTime: '2023-01-01', updateTime: '2023-01-01' },
+]);
+
+// 角色权限关系存储
+const rolePermissions = reactive(new Map<number, number[]>());
+
+// 初始化默认权限分配
+rolePermissions.set(1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 71, 72, 73, 74, 81, 82, 83, 84, 91, 92, 93, 94, 101, 102, 103, 104]);
+rolePermissions.set(2, [2, 3, 31, 6, 7, 71, 72]);
+rolePermissions.set(3, [2, 6, 7, 8, 71, 72, 73, 81, 82]);
 
 // 模拟权限菜单数据
 const permissions = [
@@ -25,9 +38,50 @@ const permissions = [
         level: 2,
         select: false,
         children: [
-          { id: 3, pid: 2, name: '用户管理', code: 'User', level: 3, select: false },
-          { id: 4, pid: 2, name: '角色管理', code: 'Role', level: 3, select: false },
-          { id: 5, pid: 2, name: '菜单管理', code: 'Permission', level: 3, select: false }
+          {
+            id: 3,
+            pid: 2,
+            name: '用户管理',
+            code: 'User',
+            level: 3,
+            select: false,
+            children: [
+              { id: 31, pid: 3, name: '查看', code: 'btn.User.list', level: 4, select: false },
+              { id: 32, pid: 3, name: '新增', code: 'btn.User.add', level: 4, select: false },
+              { id: 33, pid: 3, name: '修改', code: 'btn.User.update', level: 4, select: false },
+              { id: 34, pid: 3, name: '删除', code: 'btn.User.remove', level: 4, select: false },
+              { id: 35, pid: 3, name: '分配角色', code: 'btn.User.assgin', level: 4, select: false }
+            ]
+          },
+          {
+            id: 4,
+            pid: 2,
+            name: '角色管理',
+            code: 'Role',
+            level: 3,
+            select: false,
+            children: [
+              { id: 41, pid: 4, name: '查看', code: 'btn.Role.list', level: 4, select: false },
+              { id: 42, pid: 4, name: '新增', code: 'btn.Role.add', level: 4, select: false },
+              { id: 43, pid: 4, name: '修改', code: 'btn.Role.update', level: 4, select: false },
+              { id: 44, pid: 4, name: '删除', code: 'btn.Role.remove', level: 4, select: false },
+              { id: 45, pid: 4, name: '分配权限', code: 'btn.Role.assgin', level: 4, select: false }
+            ]
+          },
+          {
+            id: 5,
+            pid: 2,
+            name: '菜单管理',
+            code: 'Permission',
+            level: 3,
+            select: false,
+            children: [
+              { id: 51, pid: 5, name: '查看', code: 'btn.Permission.list', level: 4, select: false },
+              { id: 52, pid: 5, name: '新增', code: 'btn.Permission.add', level: 4, select: false },
+              { id: 53, pid: 5, name: '修改', code: 'btn.Permission.update', level: 4, select: false },
+              { id: 54, pid: 5, name: '删除', code: 'btn.Permission.remove', level: 4, select: false }
+            ]
+          }
         ]
       },
       {
@@ -38,10 +92,62 @@ const permissions = [
         level: 2,
         select: false,
         children: [
-          { id: 7, pid: 6, name: '品牌管理', code: 'Trademark', level: 3, select: false },
-          { id: 8, pid: 6, name: '属性管理', code: 'Attr', level: 3, select: false },
-          { id: 9, pid: 6, name: 'SPU管理', code: 'Spu', level: 3, select: false },
-          { id: 10, pid: 6, name: 'SKU管理', code: 'Sku', level: 3, select: false }
+          {
+            id: 7,
+            pid: 6,
+            name: '品牌管理',
+            code: 'Trademark',
+            level: 3,
+            select: false,
+            children: [
+              { id: 71, pid: 7, name: '查看', code: 'btn.Trademark.list', level: 4, select: false },
+              { id: 72, pid: 7, name: '新增', code: 'btn.Trademark.add', level: 4, select: false },
+              { id: 73, pid: 7, name: '修改', code: 'btn.Trademark.update', level: 4, select: false },
+              { id: 74, pid: 7, name: '删除', code: 'btn.Trademark.remove', level: 4, select: false }
+            ]
+          },
+          {
+            id: 8,
+            pid: 6,
+            name: '属性管理',
+            code: 'Attr',
+            level: 3,
+            select: false,
+            children: [
+              { id: 81, pid: 8, name: '查看', code: 'btn.Attr.list', level: 4, select: false },
+              { id: 82, pid: 8, name: '新增', code: 'btn.Attr.add', level: 4, select: false },
+              { id: 83, pid: 8, name: '修改', code: 'btn.Attr.update', level: 4, select: false },
+              { id: 84, pid: 8, name: '删除', code: 'btn.Attr.remove', level: 4, select: false }
+            ]
+          },
+          {
+            id: 9,
+            pid: 6,
+            name: 'SPU管理',
+            code: 'Spu',
+            level: 3,
+            select: false,
+            children: [
+              { id: 91, pid: 9, name: '查看', code: 'btn.Spu.list', level: 4, select: false },
+              { id: 92, pid: 9, name: '新增', code: 'btn.Spu.add', level: 4, select: false },
+              { id: 93, pid: 9, name: '修改', code: 'btn.Spu.update', level: 4, select: false },
+              { id: 94, pid: 9, name: '删除', code: 'btn.Spu.remove', level: 4, select: false }
+            ]
+          },
+          {
+            id: 10,
+            pid: 6,
+            name: 'SKU管理',
+            code: 'Sku',
+            level: 3,
+            select: false,
+            children: [
+              { id: 101, pid: 10, name: '查看', code: 'btn.Sku.list', level: 4, select: false },
+              { id: 102, pid: 10, name: '新增', code: 'btn.Sku.add', level: 4, select: false },
+              { id: 103, pid: 10, name: '修改', code: 'btn.Sku.update', level: 4, select: false },
+              { id: 104, pid: 10, name: '删除', code: 'btn.Sku.remove', level: 4, select: false }
+            ]
+          }
         ]
       }
     ]
@@ -143,29 +249,94 @@ export default [
 
   // 获取角色权限菜单
   {
+    // 获取角色权限菜单
     url: /\/admin\/acl\/permission\/toAssign\/(\d+)/,
     method: 'get',
-    response: () => {
+    response: ({ url }) => {
+      const match = url.match(/\/admin\/acl\/permission\/toAssign\/(\d+)/);
+      if (!match) {
+        return {
+          code: 400,
+          message: '请求参数错误',
+          ok: false,
+          data: null
+        };
+      }
+
+      const roleId = Number(match[1]);
+      console.log('获取角色权限菜单:', { roleId });
+
+      // 获取该角色已分配的权限
+      const assignedPermissions = rolePermissions.get(roleId) || [];
+      console.log('角色已分配权限:', assignedPermissions);
+
+      // 深拷贝权限数据并设置select状态
+      const permissionsWithSelect = JSON.parse(JSON.stringify(permissions));
+
+      // 递归设置权限选中状态
+      const setPermissionSelect = (perms: any[]) => {
+        perms.forEach(perm => {
+          perm.select = assignedPermissions.includes(perm.id);
+          if (perm.children && perm.children.length > 0) {
+            setPermissionSelect(perm.children);
+          }
+        });
+      };
+
+      setPermissionSelect(permissionsWithSelect);
+
       return {
         code: 200,
         message: '获取权限菜单成功',
         ok: true,
-        data: permissions
+        data: permissionsWithSelect
       };
     }
   },
 
   // 分配权限
   {
-    url: /\/admin\/acl\/permission\/doAssign\/\?roleId=(\d+)&permissionId=(\d+)/,
+    url: /\/admin\/acl\/permission\/doAssign\//,
     method: 'post',
-    response: () => {
-      return {
-        code: 200,
-        message: '分配权限成功',
-        ok: true,
-        data: null
-      };
+    response: ({ url, body }) => {
+      try {
+        const urlObj = new URL(url, 'http://localhost');
+        const roleId = Number(urlObj.searchParams.get('roleId'));
+        const permissionIds = Array.isArray(body) ? body : [body];
+
+        console.log('分配权限:', { roleId, permissionIds });
+
+        // 验证角色是否存在
+        const roleExists = roles.some(role => role.id === roleId);
+        if (!roleExists) {
+          return {
+            code: 404,
+            message: '角色不存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        // 存储角色权限关系
+        rolePermissions.set(roleId, permissionIds.map(id => Number(id)));
+
+        console.log('权限分配成功，当前角色权限:', rolePermissions.get(roleId));
+
+        return {
+          code: 200,
+          message: '分配权限成功',
+          ok: true,
+          data: null
+        };
+      } catch (error) {
+        console.error('分配权限失败:', error);
+        return {
+          code: 500,
+          message: '分配权限失败',
+          ok: false,
+          data: null
+        };
+      }
     }
   },
 
@@ -190,6 +361,32 @@ export default [
         message: '角色不存在',
         ok: false,
         data: null
+      };
+    }
+  },
+  // 获取角色权限列表
+  {
+    url: /\/admin\/acl\/permission\/role\/(\d+)/,
+    method: 'get',
+    response: ({ url }) => {
+      const match = url.match(/\/admin\/acl\/permission\/role\/(\d+)/);
+      if (!match) {
+        return {
+          code: 400,
+          message: '请求参数错误',
+          ok: false,
+          data: null
+        };
+      }
+
+      const roleId = Number(match[1]);
+      const assignedPermissions = rolePermissions.get(roleId) || [];
+
+      return {
+        code: 200,
+        message: '获取角色权限列表成功',
+        ok: true,
+        data: assignedPermissions
       };
     }
   }

@@ -15,7 +15,7 @@
       <el-form>
         <el-form-item>
           <el-button type="primary" @click="addUser" icon="Plus">添加用户</el-button>
-          <el-button @click="deleteSelectUser" :disabled="selectIdArr.length ? false : true" type="danger"
+          <el-button @click="deleteSelectUser" :disabled="selectIdArr.length >= 1 ? false : true" type="danger"
             icon="Delete">批量删除</el-button>
         </el-form-item>
         <el-form-item>
@@ -42,9 +42,9 @@
             </el-table-column>
           </el-table>
         </el-form-item>
-          <el-pagination @current-change="getHasUser" @size-change="handler" v-model:page-size="pageSize"
-            :pager-count="9" v-model:current-page="pageNo" :page-sizes="[5, 7, 9, 11]" :background="true"
-            layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
+        <el-pagination @current-change="getHasUser" @size-change="handler" v-model:page-size="pageSize" :pager-count="9"
+          v-model:current-page="pageNo" :page-sizes="[5, 7, 9, 11]" :background="true"
+          layout="prev, pager, next, jumper,->,sizes,total" :total="total" />
       </el-form>
     </el-card>
     <el-drawer v-model="drawer">
@@ -84,7 +84,7 @@
             </el-checkbox>
             <el-checkbox-group v-model="userRoleArr" @change="handlerCheckChange">
               <el-checkbox v-for="(item, index) in allRoleArr" :key="index" :value="item">{{ item.roleName
-                }}</el-checkbox>
+              }}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
         </el-form>
