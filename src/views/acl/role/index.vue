@@ -25,9 +25,13 @@
             <el-table-column label="更新时间" align="center" show-overflow-tooltip prop="updateTime"></el-table-column>
             <el-table-column label="操作" align="center" width="200px">
               <template #="{ row, $index }">
-                <el-button type="success" icon="User" @click="" size="small" title="分配权限"></el-button>
+                <el-button type="success" icon="User" @click="setPermission(row)" size="small" title="分配权限"></el-button>
                 <el-button type="primary" icon="Edit" @click="updateRole(row)" size="small" title="编辑"></el-button>
-                <el-button type="danger" icon="Delete" @click="" size="small" title="删除"></el-button>
+                <el-popconfirm :title="`你确定要删除${row.roleName}?`" @confirm="removeRole(row)">
+                  <template #reference>
+                    <el-button type="danger" icon="Delete" size="small" title="删除"></el-button>
+                  </template>
+                </el-popconfirm>
               </template>
             </el-table-column>
           </el-table>
@@ -53,17 +57,39 @@
         <el-button type="primary" @click="save">确定</el-button>
       </template>
     </el-dialog>
+    <el-drawer v-model="drawer">
+      <template #header>
+        <h4>分配菜单和按钮权限</h4>
+      </template>
+      <template #default>
+        <div>
+          <el-tree ref="tree" style="max-width: 600px" :data="menuArr" show-checkbox node-key="id" default-expand-all
+            :default-checked-keys="selectArr" :props="defaultProps" />
+        </div>
+      </template>
+      <template #footer>
+        <div style="flex: auto">
+          <el-button @click="">取消</el-button>
+          <el-button type="primary" @click="handler">确定</el-button>
+        </div>
+      </template>
+    </el-drawer>
   </div>
 </template>
 
 <script setup lang='ts'>
-import { reqAddOrUpdateRole, reqAllRoleList } from '@/api/acl/role';
-import type { Records, RoleResponseData } from '@/api/acl/role/type';
+import { reqAddOrUpdateRole, reqAllMenuList, reqAllRoleList, reqRemoveRole, reqSetPermission } from '@/api/acl/role';
+import type { MenuList, MenuResponseData, Records, RoleResponseData } from '@/api/acl/role/type';
 import type { RoleData } from '@/api/acl/user/type';
 import { useLayoutSettingStore } from '@/stores/modules/types/setting';
 import { ElMessage } from 'element-plus';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 
+const defaultProps = {
+  children: 'children',
+  label: 'name',
+}
+let selectArr = ref<number[]>([]);
 let settingStore = useLayoutSettingStore();
 let pageNo = ref(1);
 let limit = ref(10);
@@ -91,6 +117,9 @@ let rules = {
   ]
 };
 let RoleForm = ref<any>();
+let drawer = ref<boolean>(false);
+let menuArr = ref<MenuList>([]);
+let tree = ref<any>();
 
 onMounted(() => {
   getHasRole();
@@ -179,6 +208,49 @@ const save = async () => {
     ElMessage.success(RoleParams.id ? '更新成功' : '添加成功');
     dialogVisible.value = false;
     getHasRole(RoleParams.id ? pageNo.value : 1);
+  }
+};
+
+const setPermission = (row: RoleData) => {
+  drawer.value = true;
+  Object.assign(RoleParams, row);
+  let result: MenuResponseData = reqAllMenuList((RoleParams.id as number));
+  if (result.code === 200) {
+    menuArr.value = result.data;
+    selectArr.value = filterSelectedArr(menuArr.value, []);
+  }
+};
+
+const filterSelectedArr = (allData: MenuList, initArr: any) => {
+  allData.forEach(item => {
+    if (item.select && item.level == 4) {
+      initArr.push(item.id);
+    }
+    if (item.children && item.children.length > 0) {
+      filterSelectedArr(item.children, initArr);
+    }
+  });
+  return initArr;
+};
+
+const handler = async () => {
+  const roleId = RoleParams.id as number;
+  let checkedKeys = tree.value.getCheckedKeys();
+  let halfCheckedKeys = tree.value.getHalfCheckedKeys();
+  let permissionId = checkedKeys.concat(halfCheckedKeys);
+  let result: any = await reqSetPermission(roleId, permissionId);
+  if (result.code === 200) {
+    drawer.value = false;
+    ElMessage.success('权限分配成功');
+    window.location.reload();
+  }
+};
+
+const removeRole = async (row: RoleData) => {
+  let result: any = await reqRemoveRole((row.id as number));
+  if (result.code === 200) {
+    ElMessage.success('删除成功');
+    getHasRole(allRole.value.length > 1 ? pageNo.value : pageNo.value - 1);
   }
 };
 </script>
