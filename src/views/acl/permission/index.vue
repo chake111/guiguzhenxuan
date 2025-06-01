@@ -1,46 +1,130 @@
 <template>
-    <div>
-        <el-table :data='permissionArr' style="width:100%;margin-bottom:20px" row-key='id' border>
-          <el-table-column prop='name' label="权限名称" />
-          <el-table-column prop='code' label="权限值" />
-          <el-table-column prop='updateTime' label="修改时间" />
-          <el-table-column label="操作">
-            <template #default="{ row,$index }">
-              <el-button size='small' type="primary" @click="" :title='row.level==3?"添加功能":"添加菜单"' icon='Menu' :disabled='row.level==4?true:false'></el-button>
-              <el-button size='small' type="warning" @click="" title='编辑权限' icon='Edit' :disabled='row.level==1?true:false'></el-button>
-              <el-button size='small' type="danger" @click="" title='删除权限' icon='Delete' :disabled='row.level==1?true:false'></el-button>
+  <div>
+    <el-table :data='permissionArr' style="width:100%;margin-bottom:20px" row-key='id' border>
+      <el-table-column prop='name' label="权限名称" />
+      <el-table-column prop='code' label="权限值" />
+      <el-table-column prop='updateTime' label="修改时间" />
+      <el-table-column label="操作">
+        <template #default="{ row, $index }">
+          <el-button size='small' type="primary" @click="addPermission(row)" :title='row.level == 3 ? "添加功能" : "添加菜单"'
+            icon='Menu' :disabled='row.level == 4 ? true : false'></el-button>
+          <el-button size='small' type="warning" @click="updatePermission(row)" title='编辑权限' icon='Edit'
+            :disabled='row.level == 1 ? true : false'></el-button>
+          <el-popconfirm :title="`你确定要删除${row.name}吗？`" @confirm="removeMenu(row)" width="260px">
+            <template #reference>
+              <el-button size='small' type="danger" @click="" title='删除权限' icon='Delete'
+                :disabled='row.level == 1 ? true : false'></el-button>
             </template>
-          </el-table-column>
-        </el-table>
-    </div>
+          </el-popconfirm>
+
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-dialog v-model="dialogVisible" :title="menuData.id ? '编辑菜单' : '添加菜单'">
+      <template #default>
+        <el-form label-width="80px" :rules="rules" ref="formRef" :model="menuData">
+          <el-form-item label="权限名称" prop="name">
+            <el-input v-model="menuData.name" placeholder="请输入菜单名称"></el-input>
+          </el-form-item>
+          <el-form-item label="权限值" prop="code">
+            <el-input v-model="menuData.code" placeholder="请输入权限值"></el-input>
+          </el-form-item>
+        </el-form>
+      </template>
+      <template #footer>
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="save">确定</el-button>
+      </template>
+    </el-dialog>
+  </div>
 </template>
 
 <script setup lang='ts'>
-import { reqAllPermission } from '@/api/acl/menu';
-import type { PermissionList, PermissionResponseData } from '@/api/acl/menu/type';
-import { onMounted, ref } from 'vue';
+import { reqAddOrUpdateMenu, reqAllPermission, reqRemoveMenu } from '@/api/acl/menu';
+import type { MenuPrams, Permission, PermissionList, PermissionResponseData } from '@/api/acl/menu/type';
+import { ElMessage } from 'element-plus';
+import { nextTick, onMounted, reactive, ref } from 'vue';
 
-let permissionArr= ref<PermissionList>();
+let rules = reactive({
+  name: [{ required: true, message: '请输入权限名称', trigger: 'blur' }],
+  code: [{ required: true, message: '请输入权限值', trigger: 'blur' }],
+});
+let formRef = ref();
+let permissionArr = ref<PermissionList>();
+let dialogVisible = ref<boolean>(false);
+let menuData = reactive<MenuPrams>({
+  code: '',
+  level: 0,
+  name: '',
+  pid: 0,
+});
 
 onMounted(() => {
   getHasPermission();
 });
 
 const getHasPermission = async () => {
-//  let result:PermissionResponseData =  await reqAllPermission();
-//   if (result.code === 200) {
-//       permissionArr.value = result.data;
-//     }
+  //  let result:PermissionResponseData =  await reqAllPermission();
+  //   if (result.code === 200) {
+  //       permissionArr.value = result.data;
+  //     }
   permissionArr.value = [
-    { id: 1, name: '全部数据', code: 'user_manage', updateTime: '2023-10-01', level: 1 ,createTime: '2023-10-01',pid: 0,toCode: null,type: 1,status: null,select: true,children: [
-      { id: 2, name: '用户管理', code: 'user_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
-      { id: 3, name: '角色管理', code: 'role_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [
-        { id: 5, name: '角色权限', code: 'role_permission', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
-        { id: 6, name: '角色菜单', code: 'role_menu', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
-      ] },
-      { id: 4, name: '菜单管理', code: 'menu_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
-    ]},
+    {
+      id: 1, name: '全部数据', code: '', updateTime: '2023-10-01', level: 1, createTime: '2023-10-01', pid: 0, toCode: null, type: 1, status: null, select: true, children: [
+        { id: 2, name: '用户管理', code: 'user_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
+        {
+          id: 3, name: '角色管理', code: 'role_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [
+            { id: 5, name: '角色权限', code: 'role_permission', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
+            { id: 6, name: '角色菜单', code: 'role_menu', updateTime: '2023-10-01', level: 3, createTime: '2023-10-01', pid: 3, toCode: null, type: 1, status: null, select: true, children: [] },
+          ]
+        },
+        { id: 4, name: '菜单管理', code: 'menu_manage', updateTime: '2023-10-01', level: 2, createTime: '2023-10-01', pid: 1, toCode: null, type: 1, status: null, select: true, children: [] },
+      ]
+    },
   ];
+}
+
+const addPermission = (row: Permission) => {
+  nextTick(() => {
+    formRef.value.clearValidate();
+  });
+  Object.assign(menuData, {
+    id: 0,
+    name: '',
+    code: '',
+    level: 0,
+    pid: 0,
+  });
+  dialogVisible.value = true;
+  menuData.level = row.level + 1;
+  menuData.pid = row.id;
+}
+
+const updatePermission = (row: Permission) => {
+  nextTick(() => {
+    formRef.value.clearValidate();
+  });
+  formRef.value.clearValidate();
+  dialogVisible.value = true;
+  Object.assign(menuData, row);
+}
+
+const save = async () => {
+  await formRef.value.validate();
+  let result: any = await reqAddOrUpdateMenu(menuData);
+  if (result.code === 200) {
+    dialogVisible.value = false;
+    ElMessage.success(menuData.id ? '更新成功' : '添加成功');
+    getHasPermission();
+  }
+}
+
+const removeMenu = async (row: Permission) => {
+  let result: any = await reqRemoveMenu(row.id);
+  if (result.code === 200) {
+    ElMessage.success('删除成功');
+    getHasPermission();
+  }
 }
 </script>
 
