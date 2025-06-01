@@ -10,7 +10,7 @@ export interface Permission {
   updateTime:string;
   pid:number;
   name:string;
-  code:null;
+  code:string;
   toCode:null,
   type:number;
   status:null;
