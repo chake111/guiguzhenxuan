@@ -131,10 +131,10 @@ const validatorUsername = (rule: any, value: string, callback: any) => {
   }
 };
 const validatorName = (rule: any, value: string, callback: any) => {
-  if (value.trim().length >= 5) {
+  if (value.trim().length >= 2) {
     callback();
   } else {
-    callback(new Error('用户昵称至少五位'));
+    callback(new Error('用户昵称至少两位'));
   }
 };
 const validatorPassword = (rule: any, value: string, callback: any) => {

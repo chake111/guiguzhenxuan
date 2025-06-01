@@ -1,0 +1,131 @@
+import { MockMethod } from 'vite-plugin-mock';
+
+// 模拟权限菜单数据
+let permissions = [
+  {
+    id: 1,
+    createTime: '2023-01-01 00:00:00',
+    updateTime: '2023-01-01 00:00:00',
+    pid: 0,
+    name: '全部数据',
+    code: '',
+    toCode: null,
+    type: 1,
+    status: null,
+    level: 1,
+    children: [
+      {
+        id: 2,
+        createTime: '2023-01-01 00:00:00',
+        updateTime: '2023-01-01 00:00:00',
+        pid: 1,
+        name: '权限管理',
+        code: 'Acl',
+        toCode: null,
+        type: 1,
+        status: null,
+        level: 2,
+        children: [
+          {
+            id: 3,
+            createTime: '2023-01-01 00:00:00',
+            updateTime: '2023-01-01 00:00:00',
+            pid: 2,
+            name: '用户管理',
+            code: 'User',
+            toCode: null,
+            type: 1,
+            status: null,
+            level: 3,
+            children: [
+              {
+                id: 4,
+                createTime: '2023-01-01 00:00:00',
+                updateTime: '2023-01-01 00:00:00',
+                pid: 3,
+                name: '查看',
+                code: 'user:list',
+                toCode: null,
+                type: 2,
+                status: null,
+                level: 4
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+
+export default [
+  // 获取权限菜单列表
+  {
+    url: '/admin/acl/permission',
+    method: 'get',
+    response: () => {
+      return {
+        code: 200,
+        message: '获取权限菜单成功',
+        ok: true,
+        data: permissions
+      };
+    }
+  },
+
+  // 新增权限菜单
+  {
+    url: '/admin/acl/permission/save',
+    method: 'post',
+    response: ({ body }) => {
+      const newPermission = {
+        id: Date.now(),
+        createTime: new Date().toISOString(),
+        updateTime: new Date().toISOString(),
+        toCode: null,
+        type: 1,
+        status: null,
+        ...body
+      };
+
+      // 简单的添加逻辑，实际应该根据pid找到父级并添加到children中
+      permissions.push(newPermission);
+
+      return {
+        code: 200,
+        message: '新增权限菜单成功',
+        ok: true,
+        data: newPermission
+      };
+    }
+  },
+
+  // 更新权限菜单
+  {
+    url: '/admin/acl/permission/update',
+    method: 'put',
+    response: ({ body }) => {
+      // 简化的更新逻辑
+      return {
+        code: 200,
+        message: '更新权限菜单成功',
+        ok: true,
+        data: { ...body, updateTime: new Date().toISOString() }
+      };
+    }
+  },
+
+  // 删除权限菜单
+  {
+    url: /\/admin\/acl\/permission\/remove\/(\d+)/,
+    method: 'delete',
+    response: () => {
+      return {
+        code: 200,
+        message: '删除权限菜单成功',
+        ok: true,
+        data: null
+      };
+    }
+  }
+] as MockMethod[];
