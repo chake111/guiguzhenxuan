@@ -5,6 +5,7 @@ import 'nprogress/nprogress.css';
 nprogress.configure({ showSpinner: false });
 import { useUserStore } from "./stores/user";
 import pinia from "./stores";
+import { ElMessage } from "element-plus";
 let userStore = useUserStore(pinia);
 router.beforeEach(async (to, from, next) => {
   document.title = `${setting.title} - ${to.meta.title}`
@@ -22,8 +23,8 @@ router.beforeEach(async (to, from, next) => {
           await userStore.userInfo();
           next();
         } catch (error) {
-          console.error('Failed to fetch user info:', error);
-          userStore.userLogout();
+          ElMessage.error(error as any);
+          await userStore.userLogout();
           next({ path: '/login', query: { redirect: to.path } });
         }
       }

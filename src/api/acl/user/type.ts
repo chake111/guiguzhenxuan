@@ -27,18 +27,25 @@ export interface UserResponseData extends ResponseData {
   };
 }
 
-export interface loginForm {
+export interface LoginFormData {
   username: string;
   password: string;
 }
-interface dataType {
-  token?: string;
-  message?: string;
+
+export interface LoginResponseData extends ResponseData {
+  data: string;
 }
-export interface loginResponseData {
-  code: number;
-  data: dataType;
+
+export interface UserInfoResponseData extends ResponseData {
+  data:{
+    routes: string[];
+    buttons: string[];
+    roles: string[];
+    name:string;
+    avatar:string;
+  }
 }
+
 interface userInfo {
   userId: number;
   username: string;
