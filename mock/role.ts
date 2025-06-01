@@ -51,13 +51,25 @@ const permissions = [
 export default [
   // 获取角色列表
   {
-    url: /\/admin\/acl\/role\/(\d+)\/(\d+)\/\?roleName=(.*)/,
+    url: /\/admin\/acl\/role\/(\d+)\/(\d+)/,
     method: 'get',
     response: ({ url }) => {
-      const match = url.match(/\/admin\/acl\/role\/(\d+)\/(\d+)\/\?roleName=(.*)/);
+      const match = url.match(/\/admin\/acl\/role\/(\d+)\/(\d+)/);
+      if (!match) {
+        return {
+          code: 400,
+          message: '请求参数错误',
+          ok: false,
+          data: null
+        };
+      }
+
       const page = Number(match[1]);
       const limit = Number(match[2]);
-      const roleName = decodeURIComponent(match[3]);
+
+      // 从查询参数中获取roleName
+      const urlObj = new URL(url, 'http://localhost');
+      const roleName = urlObj.searchParams.get('roleName') || '';
 
       let filteredRoles = roles;
       if (roleName && roleName !== 'undefined') {
@@ -90,7 +102,8 @@ export default [
     response: ({ body }) => {
       const newRole = {
         id: roles.length + 1,
-        ...body,
+        roleName: body.roleName,
+        remark: body.remark,
         createTime: new Date().toISOString().split('T')[0],
         updateTime: new Date().toISOString().split('T')[0]
       };

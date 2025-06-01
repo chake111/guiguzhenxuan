@@ -105,7 +105,6 @@ export default [
     url: '/admin/acl/permission/update',
     method: 'put',
     response: ({ body }) => {
-      // 简化的更新逻辑
       return {
         code: 200,
         message: '更新权限菜单成功',
@@ -117,9 +116,34 @@ export default [
 
   // 删除权限菜单
   {
-    url: /\/admin\/acl\/permission\/remove\/(\d+)/,
+    url: /admin\/acl\/permission\/remove\/(\d+)/,
     method: 'delete',
-    response: () => {
+    response: ({ url }) => {
+      // 从URL中提取ID
+      const id = parseInt(url.match(/\/remove\/(\d+)/)[1]);
+
+      // 递归查找并删除节点的函数
+      const removeNode = (nodes) => {
+        for (let i = 0; i < nodes.length; i++) {
+          const node = nodes[i];
+          // 如果当前节点就是要删除的节点
+          if (node.id === id) {
+            nodes.splice(i, 1);
+            return true;
+          }
+          // 如果当前节点有子节点，递归查找
+          if (node.children && node.children.length) {
+            if (removeNode(node.children)) {
+              return true;
+            }
+          }
+        }
+        return false;
+      };
+
+      // 从权限树中删除节点
+      removeNode(permissions);
+
       return {
         code: 200,
         message: '删除权限菜单成功',

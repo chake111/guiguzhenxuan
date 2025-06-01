@@ -194,11 +194,30 @@ export default [
   {
     url: '/admin/acl/user/doAssignRole/',
     method: 'post',
-    response: () => {
+    response: ({ body }) => {
+      const { userId, roleIdList } = body;
+      const userIndex = users.findIndex(user => user.id === userId);
+
+      if (userIndex > -1 && roleIdList && roleIdList.length > 0) {
+        // 根据角色ID找到角色名称
+        const assignedRole = roles.find(role => roleIdList.includes(role.id));
+        if (assignedRole) {
+          users[userIndex].roleName = assignedRole.roleName;
+          users[userIndex].updateTime = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        }
+
+        return {
+          code: 200,
+          message: '分配角色成功',
+          ok: true,
+          data: null
+        };
+      }
+
       return {
-        code: 200,
-        message: '分配角色成功',
-        ok: true,
+        code: 400,
+        message: '分配角色失败',
+        ok: false,
         data: null
       };
     }

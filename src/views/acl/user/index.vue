@@ -244,8 +244,8 @@ const confirmClick = async () => {
     }),
   }
   let result: any = await reqSetUserRole(data);
-  if (result.code !== 200) {
-    ElMessage.error('分配角色成功');
+  if (result.code == 200) {
+    ElMessage.success('分配角色成功');
     drawer1.value = false;
     getHasUser(pageNo.value);
   }
