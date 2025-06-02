@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 export const useLayoutSettingStore = defineStore('SettingStore', () => {
-    const fold = ref(false);
-    const refresh = ref(false);
-    return { fold,refresh };
+  const fold = ref(false);
+  const refresh = ref(false);
+  const isDark = ref(false);
+  return { fold, refresh, isDark };
 })

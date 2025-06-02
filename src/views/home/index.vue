@@ -13,11 +13,15 @@
         </div>
         <div class="weather-location-info">
           <div class="weather-info">
-            <el-icon><component :is="weatherIcon" /></el-icon>
+            <el-icon>
+              <component :is="weatherIcon" />
+            </el-icon>
             <span>{{ weatherInfo }}</span>
           </div>
           <div class="location-info">
-            <el-icon><Location /></el-icon>
+            <el-icon>
+              <Location />
+            </el-icon>
             <span>{{ locationInfo }}</span>
           </div>
         </div>
@@ -46,7 +50,9 @@
           </template>
           <div class="chart-container">
             <div class="chart-placeholder">
-              <el-icon :size="60" color="#ddd"><TrendCharts /></el-icon>
+              <el-icon :size="60" color="#ddd">
+                <TrendCharts />
+              </el-icon>
               <p>图表组件待开发</p>
             </div>
           </div>
@@ -62,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref,markRaw } from 'vue'
+import { ref, markRaw } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { getTime } from '@/utils/time'
 import setting from '@/setting.ts'
@@ -71,7 +77,7 @@ import QuickActions from '@/components/QuickActions/index.vue'
 import RecentActivity from '@/components/RecentActivity/index.vue'
 import { Sunny, Cloudy, PartlyCloudy, TrendCharts, Location } from '@element-plus/icons-vue'
 
-let userStore = useUserStore()
+const userStore = useUserStore()
 const chartType = ref('week')
 
 // 动态天气信息
@@ -83,13 +89,12 @@ const getWeatherData = () => {
     { icon: markRaw(Cloudy), text: '阴天 16°C', condition: 'cloudy' }
   ]
 
-  // 根据时间模拟不同天气
   if (hour >= 6 && hour < 12) {
-    return weatherConditions[0] // 上午晴天
+    return weatherConditions[0]
   } else if (hour >= 12 && hour < 18) {
-    return weatherConditions[1] // 下午多云
+    return weatherConditions[1]
   } else {
-    return weatherConditions[2] // 晚上阴天
+    return weatherConditions[2]
   }
 }
 
@@ -97,10 +102,8 @@ const weather = getWeatherData()
 const weatherIcon = weather.icon
 const weatherInfo = weather.text
 
-// 地点信息
 const locationInfo = '南宁市西乡塘区'
 
-// 动态欢迎语
 const getWelcomeMessage = () => {
   const hour = new Date().getHours()
   const messages = [
@@ -123,9 +126,7 @@ const getWelcomeMessage = () => {
 </script>
 
 <style scoped>
-.home-container {
-  padding: 20px;
-}
+
 
 .welcome-card {
   margin-bottom: 20px;
