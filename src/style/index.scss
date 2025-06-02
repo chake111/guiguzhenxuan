@@ -1,7 +1,102 @@
-@use './reset.scss';
+@import './reset.scss';
+@import './variable.scss';
 
+/* 全局滚动条样式 - 现代化设计 */
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+    box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #e6e6e6 0%, #e6e6e6 100%);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #e6e6e6 0%, #e6e6e6 100%);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    transform: scale(1.1);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, #e6e6e6 0%, #e6e6e6 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+}
+
+/* 深色主题滚动条 */
+.dark-theme ::-webkit-scrollbar-track {
+    background: #2c2c2c;
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a6578 0%, #3d4758 100%);
+    box-shadow: 0 2px 8px rgba(74, 85, 104, 0.4);
+}
+
+.dark-theme ::-webkit-scrollbar-corner {
+    background: #2c2c2c;
+}
+
+/* 细滚动条变体 - 用于特定组件 */
+.thin-scrollbar ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.thin-scrollbar ::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.6);
+    border-radius: 2px;
+    border: none;
+}
+
+.thin-scrollbar ::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.8);
+    transform: none;
+    box-shadow: none;
+}
+
+/* 隐藏滚动条但保持滚动功能 */
+.hidden-scrollbar {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.hidden-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+/* 自定义滚动条动画 */
+@keyframes scrollbar-appear {
+    from {
+        opacity: 0;
+        transform: scaleY(0.5);
+    }
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+::-webkit-scrollbar-thumb {
+    animation: scrollbar-appear 0.3s ease-out;
 }
 ::-webkit-scrollbar-track{
     background-color: $base-menu-menu-background;
