@@ -25,6 +25,7 @@ export const useUserStore = defineStore("User", () => {
   const userInfo = async () => {
     let result: UserInfoResponseData = await reqUserInfo();
     if (result.code == 200) {
+      console.log(result.data);
       username.value = result.data.name;
       avatar.value = result.data.avatar;
     } else {

@@ -1,9 +1,7 @@
-import { mock } from 'node:test';
 import { MockMethod } from 'vite-plugin-mock';
 import { reactive } from 'vue';
 import { roles as roles1 } from './role';
 
-// 模拟用户数据 - 使用reactive使其响应式
 const users = reactive([
   {
     id: 1,
@@ -47,19 +45,16 @@ const users = reactive([
   }
 ]);
 
-// 用户角色关系存储 - 改为存储单个角色ID
 const userRoles = reactive(new Map<number, number>());
 
-// 初始化用户角色关系
-userRoles.set(1, 1); // 超级管理员
-userRoles.set(2, 2); // 普通用户
-userRoles.set(3, 3); // 运营人员
-userRoles.set(4, 6); // 开发人员
+userRoles.set(1, 1);
+userRoles.set(2, 2);
+userRoles.set(3, 3);
+userRoles.set(4, 6);
 
 const roles = roles1;
 
 export default [
-  // 登录接口
   {
     url: '/admin/acl/index/login',
     method: 'post',
@@ -83,27 +78,76 @@ export default [
     }
   },
 
-  // 获取用户信息接口
   {
     url: '/admin/acl/index/info',
     method: 'get',
-    response: () => {
+    response: ({ headers }) => {
+      const token = headers.token || headers.authorization;
+
+      if (!token) {
+        return {
+          code: 401,
+          message: '未登录',
+          ok: false,
+          data: null
+        };
+      }
+
+      const userId = token.replace('mock-token-', '');
+      const user = users.find(u => u.id === Number(userId));
+
+      if (!user) {
+        return {
+          code: 401,
+          message: 'token无效',
+          ok: false,
+          data: null
+        };
+      }
+
+      const userRoleId = userRoles.get(user.id);
+      const userRole = roles.find(r => r.id === userRoleId);
+
+      let routes = [];
+      let buttons = [];
+
+      switch (userRole?.roleName) {
+        case '超级管理员':
+          routes = ['Product', 'Acl', 'User', 'Role', 'Permission'];
+          buttons = ['cuser', 'uuser', 'duser', 'crole', 'urole', 'drole'];
+          break;
+        case '开发人员':
+          routes = ['Product', 'Acl'];
+          buttons = ['cuser', 'uuser'];
+          break;
+        case '运营人员':
+          routes = ['Product'];
+          buttons = ['cuser'];
+          break;
+        case '普通用户':
+          routes = ['Product'];
+          buttons = [];
+          break;
+        default:
+          routes = [];
+          buttons = [];
+      }
+
       return {
         code: 200,
         message: '获取用户信息成功',
         ok: true,
         data: {
-          routes: ['Product', 'Acl', 'User', 'Role', 'Permission'],
-          buttons: ['cuser', 'uuser', 'duser'],
-          roles: ['超级管理员'],
-          name: '超级管理员',
+          routes,
+          buttons,
+          roles: [userRole?.roleName || ''],
+          name: user.name,
           avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif'
         }
       };
     }
   },
 
-  // 退出登录接口
   {
     url: '/admin/acl/index/logout',
     method: 'get',
@@ -117,7 +161,6 @@ export default [
     }
   },
 
-  // 获取用户列表接口
   {
     url: /\/admin\/acl\/user\/(\d+)\/(\d+)\/(.*)/,
     method: 'get',
@@ -151,7 +194,6 @@ export default [
     }
   },
 
-  // 新增用户接口
   {
     url: '/admin/acl/user/',
     method: 'post',
@@ -175,14 +217,11 @@ export default [
       };
     }
   },
-
-  // 修复新增用户接口
   {
     url: '/admin/acl/user/save',
     method: 'post',
     response: ({ body }) => {
       try {
-        // 验证必填字段
         if (!body.username || !body.password || !body.name) {
           return {
             code: 400,
@@ -192,7 +231,6 @@ export default [
           };
         }
 
-        // 检查用户名是否已存在
         const existingUser = users.find(u => u.username === body.username);
         if (existingUser) {
           return {
@@ -233,7 +271,6 @@ export default [
     }
   },
 
-  // 优化更新用户接口
   {
     url: '/admin/acl/user/update',
     method: 'put',
@@ -249,7 +286,6 @@ export default [
           };
         }
 
-        // 检查用户名是否与其他用户冲突
         const existingUser = users.find(u => u.username === body.username && u.id !== body.id);
         if (existingUser) {
           return {
@@ -260,7 +296,6 @@ export default [
           };
         }
 
-        // 更新用户信息（不更新密码）
         const updatedUser = {
           ...users[index],
           username: body.username,
@@ -288,7 +323,6 @@ export default [
     }
   },
 
-  // 优化获取用户角色接口
   {
     url: /\/admin\/acl\/user\/toAssign\/(\d+)/,
     method: 'get',
@@ -319,7 +353,6 @@ export default [
     }
   },
 
-  // 优化分配用户角色接口
   {
     url: '/admin/acl/user/doAssignRole/',
     method: 'post',
@@ -346,10 +379,8 @@ export default [
           };
         }
 
-        // 存储用户角色关系 - 改为单个角色ID
         if (roleId) {
           userRoles.set(userId, roleId);
-          // 更新用户的角色名称显示
           const assignedRole = roles.find(role => role.id === roleId);
           if (assignedRole) {
             users[userIndex].roleName = assignedRole.roleName;
@@ -378,7 +409,6 @@ export default [
     }
   },
 
-  // 优化批量删除用户接口
   {
     url: '/admin/acl/user/batchRemove/',
     method: 'delete',
@@ -387,14 +417,13 @@ export default [
         const idList = Array.isArray(body) ? body : [body];
         let deletedCount = 0;
 
-        // 防止删除超级管理员
         const filteredIds = idList.filter(id => id !== 1);
 
         filteredIds.forEach(id => {
           const index = users.findIndex(user => user.id === id);
           if (index > -1) {
             users.splice(index, 1);
-            userRoles.delete(id); // 同时删除角色关系
+            userRoles.delete(id);
             deletedCount++;
           }
         });
@@ -416,7 +445,6 @@ export default [
     }
   },
 
-  // 优化删除单个用户接口
   {
     url: /\/admin\/acl\/user\/remove\/(\d+)/,
     method: 'delete',
@@ -424,7 +452,6 @@ export default [
       try {
         const id = Number(url.split('/').pop());
 
-        // 防止删除超级管理员
         if (id === 1) {
           return {
             code: 400,
@@ -445,7 +472,7 @@ export default [
         }
 
         users.splice(index, 1);
-        userRoles.delete(id); // 同时删除角色关系
+        userRoles.delete(id);
 
         return {
           code: 200,

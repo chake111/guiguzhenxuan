@@ -1,5 +1,5 @@
 <template>
-  <el-card class="quick-actions" shadow="never">
+  <el-card class="quick-actions">
     <template #header>
       <div class="card-header">
         <span>快捷操作</span>
@@ -41,7 +41,6 @@ interface QuickAction {
   path: string
 }
 
-// 更实用的快捷操作
 const quickActions: QuickAction[] = [
   {
     name: '新增商品',
@@ -99,13 +98,11 @@ const handleAction = (path: string) => {
 .action-item {
   text-align: center;
   padding: 20px;
-  border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .action-item:hover {
-  background-color: #f5f7fa;
   transform: translateY(-2px);
 }
 
@@ -121,7 +118,6 @@ const handleAction = (path: string) => {
 
 .action-name {
   font-size: 14px;
-  color: #333;
   margin: 0;
 }
 </style>
