@@ -11,9 +11,15 @@
           <p class="subtitle">欢迎来到{{ setting.title }}</p>
           <p class="description">{{ getWelcomeMessage() }}</p>
         </div>
-        <div class="weather-info">
-          <el-icon><component :is="weatherIcon" /></el-icon>
-          <span>{{ weatherInfo }}</span>
+        <div class="weather-location-info">
+          <div class="weather-info">
+            <el-icon><component :is="weatherIcon" /></el-icon>
+            <span>{{ weatherInfo }}</span>
+          </div>
+          <div class="location-info">
+            <el-icon><Location /></el-icon>
+            <span>{{ locationInfo }}</span>
+          </div>
         </div>
       </div>
     </el-card>
@@ -63,7 +69,7 @@ import setting from '@/setting.ts'
 import StatisticsCard from '@/components/StatisticsCard/index.vue'
 import QuickActions from '@/components/QuickActions/index.vue'
 import RecentActivity from '@/components/RecentActivity/index.vue'
-import { Sunny, Cloudy, PartlyCloudy, TrendCharts } from '@element-plus/icons-vue'
+import { Sunny, Cloudy, PartlyCloudy, TrendCharts, Location } from '@element-plus/icons-vue'
 
 let userStore = useUserStore()
 const chartType = ref('week')
@@ -90,6 +96,9 @@ const getWeatherData = () => {
 const weather = getWeatherData()
 const weatherIcon = weather.icon
 const weatherInfo = weather.text
+
+// 地点信息
+const locationInfo = '南宁市西乡塘区'
 
 // 动态欢迎语
 const getWelcomeMessage = () => {
@@ -165,12 +174,26 @@ const getWelcomeMessage = () => {
   color: rgba(255, 255, 255, 0.7);
 }
 
+.weather-location-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .weather-info {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 14px;
   color: rgba(255, 255, 255, 0.9);
+}
+
+.location-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .card-header {
