@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-table :data='permissionArr' style="width:100%;margin-bottom:20px" row-key='id' border>
+    <el-table :data='permissionArr' style="width:100%;margin-bottom:20px" row-key='id' border default-expand-all>
       <el-table-column prop='name' label="权限名称" />
       <el-table-column prop='code' label="权限值" />
       <el-table-column prop='updateTime' label="修改时间" />
@@ -65,6 +65,8 @@ onMounted(() => {
 
 const getHasPermission = async () => {
   let result: PermissionResponseData = await reqAllPermission();
+  console.log(result.data);
+
   if (result.code === 200) {
     permissionArr.value = result.data;
   }
