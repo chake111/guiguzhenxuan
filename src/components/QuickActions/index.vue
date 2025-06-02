@@ -1,12 +1,12 @@
 <template>
-  <el-card class="quick-actions">
+  <el-card icon="" class="quick-actions">
     <template #header>
       <div class="card-header">
         <span>快捷操作</span>
       </div>
     </template>
     <el-row :gutter="15">
-      <el-col :span="6" v-for="action in quickActions" :key="action.name">
+      <el-col :span="4" v-for="action in quickActions" :key="action.name">
         <div class="action-item" @click="handleAction(action.path)">
           <div class="action-icon" :style="{ backgroundColor: action.color }">
             <el-icon :size="24" color="white">
