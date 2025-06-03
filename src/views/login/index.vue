@@ -41,7 +41,7 @@
 
             <div class="form-options">
               <el-checkbox v-model="rememberPassword">记住密码</el-checkbox>
-              <el-link type="primary" :underline="false" @click="$router.push('/forgot-password')">忘记密码？</el-link>
+              <el-link type="primary" underline="never" @click="$router.push('/forgot-password')">忘记密码？</el-link>
             </div>
 
             <el-form-item>
@@ -53,7 +53,7 @@
           </el-form>
 
           <div class="form-footer">
-            <p>还没有账号？ <el-link type="primary" :underline="false" @click="$router.push('/register')">立即注册</el-link></p>
+            <p>还没有账号？ <el-link type="primary" underline="never" @click="$router.push('/register')">立即注册</el-link></p>
           </div>
         </div>
       </div>

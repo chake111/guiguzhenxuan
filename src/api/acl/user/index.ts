@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import type { AllRoleResponseData, LoginFormData, LoginResponseData, SetRoleData, User } from './type';
+import type { AllRoleResponseData, LoginFormData, LoginResponseData, SetRoleData, User, RegisterFormData } from './type';
 import type { UserResponseData } from "./type";
 
 enum API {
@@ -10,25 +10,30 @@ enum API {
   ADDUSER_URL = "/admin/acl/user/save",
   UPDATEUSER_URL = "/admin/acl/user/update",
   AllROLE_URL = "/admin/acl/user/toAssign/",
-  SETROLE_URL = "/admin/acl/user/doAssignRole/",
+  SETROLE_URL = "/admin/acl/user/doAssignRole",
   DELELETEUSER_URL = "/admin/acl/user/remove/",
-  DELETEBATCHUSER_URL = "/admin/acl/user/batchRemove/",
-  REGISTER_URL = '/admin/acl/index/register', // 确保这个路径与后端路由匹配
+  DELETEBATCHUSER_URL = "/admin/acl/user/batchRemove",
+  REGISTER_URL = '/admin/acl/index/register',
 }
 
 export const reqLogin = (data: LoginFormData) => request.post<any, LoginResponseData>(API.LOGIN_URL, data);
 export const reqUserInfo = () => request.get<any, any>(API.USER_INFO_URL);
 export const reqLogout = () => request.get<any, any>(API.LOGOUT_URL);
-export const reqALLUserInfo = (page: number, limit: number, username: string) => request.get<any, UserResponseData>(API.ALLUSER_URL + `${page}/${limit}/${username}`);
-export const reqAddOrUpdateUser = ((data: User) => {
+export const reqALLUserInfo = (page: number, limit: number, username: string) => {
+  const url = username ?
+    API.ALLUSER_URL + `${page}/${limit}/${username}` :
+    API.ALLUSER_URL + `${page}/${limit}`;
+  return request.get<any, UserResponseData>(url);
+};
+export const reqAddOrUpdateUser = (data: User) => {
   if (data.id) {
     return request.put<any, any>(API.UPDATEUSER_URL, data);
   } else {
     return request.post<any, any>(API.ADDUSER_URL, data);
   }
-});
-export const reqAllRole = ((userId: number) => request.get<any, AllRoleResponseData>(API.AllROLE_URL + userId));
-export const reqSetUserRole = ((data: SetRoleData) => request.post<any, any>(API.SETROLE_URL, data));
+};
+export const reqAllRole = (userId: number) => request.get<any, AllRoleResponseData>(API.AllROLE_URL + userId);
+export const reqSetUserRole = (data: SetRoleData) => request.post<any, any>(API.SETROLE_URL, data);
 export const reqRemoveUser = (userId: number) => request.delete<any, any>(API.DELELETEUSER_URL + userId);
 export const reqRemoveBatchUser = (idList: number[]) => request.delete<any, any>(API.DELETEBATCHUSER_URL, { data: idList });
-export const reqRegister = (data: RegisterFormData) => request.post<any, any>(API.REGISTER_URL, data); // 新增注册请求方法
+export const reqRegister = (data: RegisterFormData) => request.post<any, any>(API.REGISTER_URL, data);

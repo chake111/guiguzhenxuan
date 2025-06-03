@@ -53,9 +53,10 @@ exports.login = async (req, res) => {
 };
 
 // 获取用户信息
-exports.getUserInfo = async (req, res) => {
+exports.getUserInfo = async (req, res, next) => {
   try {
-    const user = await User.findById(req.userData.id).populate('roles');
+    // 不使用populate，直接查询用户
+    const user = await User.findById(req.userData.id);
     if (!user) {
       return res.status(404).json({
         code: 404,
@@ -65,44 +66,38 @@ exports.getUserInfo = async (req, res) => {
       });
     }
 
-    // 获取用户角色和权限
-    const roles = user.roles.map(role => role.roleName);
+    // 使用roleName字段
+    const roleName = user.roleName;
 
-    // 根据角色获取路由和按钮权限
+    // 根据角色名称返回相应的权限
     let routes = [];
     let buttons = [];
 
-    // 这里简化处理，实际应该从权限表中查询
-    if (roles.includes('超级管理员')) {
-      routes = ['Product', 'Trademark', 'Attr', 'Spu', 'Sku', 'Acl', 'User', 'Role', 'Permission'];
-      buttons = ['cuser', 'uuser', 'duser', 'crole', 'urole', 'drole'];
-    } else if (roles.includes('开发人员')) {
-      routes = ['Product', 'Acl'];
-      buttons = ['cuser', 'uuser'];
-    } else if (roles.includes('运营人员')) {
-      routes = ['Product'];
-      buttons = ['cuser'];
-    } else if (roles.includes('普通用户')) {
-      routes = ['Product'];
-      buttons = [];
+    // 在 getUserInfo 方法中，修改 routes 的返回格式
+    if (roleName === '超级管理员') {
+    routes = ['Acl', 'User', 'Role', 'Permission', 'Product', 'Trademark', 'Attr', 'Spu', 'Sku'];
+    } else if (roleName === '普通用户') {
+      routes = ['Product', 'Trademark'];
+      buttons = ['btn.Trademark.add'];
     }
 
-    res.json({
+    // 返回用户信息和权限
+    return res.status(200).json({
       code: 200,
       message: '获取用户信息成功',
       ok: true,
       data: {
-        routes,
-        buttons,
-        roles,
         name: user.name,
-        avatar: user.avatar
+        avatar: user.avatar,
+        buttons,
+        routes
       }
     });
   } catch (error) {
-    res.status(500).json({
+    console.error('获取用户信息失败:', error);
+    return res.status(500).json({
       code: 500,
-      message: '服务器错误',
+      message: '获取用户信息失败',
       ok: false,
       data: null
     });

@@ -22,11 +22,9 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// 路由
+
 app.use('/admin/acl/index', userRoutes);
-// 使用不同的路由处理器或者移除这一行
-// app.use('/admin/acl/user', userRoutes);
-app.use('/admin/acl/user', userRoutes); // 如果需要保留，应该使用不同的路由处理器
+app.use('/admin/acl/user', userRoutes);
 app.use('/admin/acl/role', roleRoutes);
 app.use('/admin/acl/permission', permissionRoutes);
 app.use('/admin/product/baseTrademark', trademarkRoutes);

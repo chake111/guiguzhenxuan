@@ -13,11 +13,14 @@ router.get('/logout', authMiddleware, userController.logout);
 
 // 用户管理路由
 router.get('/:page/:limit/:username', authMiddleware, userController.getAllUsers);
+router.get('/:page/:limit', authMiddleware, userController.getAllUsers);
 router.post('/save', authMiddleware, userController.addUser);
 router.put('/update', authMiddleware, userController.updateUser);
 router.get('/toAssign/:id', authMiddleware, userController.getUserRoles);
 router.post('/doAssignRole', authMiddleware, userController.assignRole);
 router.delete('/remove/:id', authMiddleware, userController.deleteUser);
 router.delete('/batchRemove', authMiddleware, userController.batchDeleteUsers);
-
+// 用户管理路由
+router.get('/:page/:limit/:username', authMiddleware, userController.getAllUsers);
+router.get('/:page/:limit', authMiddleware, userController.getAllUsers);
 module.exports = router;

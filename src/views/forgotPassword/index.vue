@@ -13,7 +13,7 @@
                 <el-button type="primary" @click="submitForm" size="large">重置密码</el-button>
             </el-form-item>
         </el-form>
-        <el-link type="primary" :underline="false" @click="$router.push('/login')">返回登录</el-link>
+        <el-link type="primary" underline="never" @click="$router.push('/login')">返回登录</el-link>
     </div>
 </template>
 
