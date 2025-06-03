@@ -489,5 +489,60 @@ export default [
         };
       }
     }
+  },
+  // 添加注册接口
+  {
+    url: '/admin/acl/index/register',
+    method: 'post',
+    response: ({ body }) => {
+      try {
+        if (!body.username || !body.password) {
+          return {
+            code: 400,
+            message: '用户名和密码为必填项',
+            ok: false,
+            data: null
+          };
+        }
+
+        const existingUser = users.find(u => u.username === body.username);
+        if (existingUser) {
+          return {
+            code: 400,
+            message: '用户名已存在',
+            ok: false,
+            data: null
+          };
+        }
+
+        const newUser = {
+          id: Math.max(...users.map(u => u.id)) + 1,
+          username: body.username,
+          password: body.password,
+          name: body.username, // 可以根据需要修改
+          phone: '',
+          roleName: '普通用户',
+          createTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
+          updateTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        };
+
+        users.push(newUser);
+        userRoles.set(newUser.id, 2); // 默认分配为普通用户角色
+
+        return {
+          code: 200,
+          message: '注册成功',
+          ok: true,
+          data: 'mock-token-' + newUser.id // 返回token，与登录保持一致
+        };
+      } catch (error) {
+        return {
+          code: 500,
+          message: '注册失败',
+          ok: false,
+          data: null
+        };
+      }
+    }
   }
 ] as MockMethod[];

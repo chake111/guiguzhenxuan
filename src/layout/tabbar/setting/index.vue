@@ -9,14 +9,27 @@
     <template #reference>
       <el-button size="small" icon="Setting" circle style="border: 1px solid #ccc;"></el-button>
     </template>
-    <div class="setting-popover">
-      <el-form label-width="80px">
-        <el-form-item label="主题颜色">
-          <el-color-picker v-model="color" show-alpha></el-color-picker>
-        </el-form-item>
+    <div>
+      <el-form>
         <el-form-item label="暗黑模式">
-          <el-switch inline-prompt @change="changeThemeColor" v-model="layoutSettingStore.isDark" active-icon="MoonNight"
-            inactive-icon="Sunny"></el-switch>
+          <el-switch @change="changeThemeColor" v-model="layoutSettingStore.isDark">
+            <template #inactive-action>
+              <el-icon>
+                <Moon color="black"></Moon>
+              </el-icon>
+            </template>
+            <template #active-action>
+              <el-icon>
+                <Sunny color="black"></Sunny>
+              </el-icon>
+            </template>
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="菜单模式">
+          <el-radio-group v-model="layoutSettingStore.menuMode">
+            <el-radio label="vertical">垂直</el-radio>
+            <el-radio label="horizontal">水平</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
     </div>
@@ -41,15 +54,9 @@
 <script setup lang='ts'>
 import { useLayoutSettingStore } from '@/stores/modules/types/setting';
 import { useUserStore } from '@/stores/user';
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 
-const color = ref('#409EFF');
-const predefinedColors = [
-  '#409EFF', '#67C23A', '#E6A23C', '#F56C6C', '#909399', '#FFB980',
-  '#FF85C0', '#37A2DA', '#32C5E9', '#67E0E3', '#9FE6B8', '#FFDB5C',
-  '#ff9f7f', '#fb7293', '#E062AE', '#E690D1', '#e7bcf3'
-];
 const layoutSettingStore = useLayoutSettingStore();
 const userStore = useUserStore();
 const $router = useRouter();
@@ -67,6 +74,12 @@ const changeThemeColor = () => {
   }
 }
 
+// 页面加载时立即应用主题
+onMounted(() => {
+  changeThemeColor();
+});
+
+// 监听主题变化
 watch(() => layoutSettingStore.isDark, (newVal) => {
   changeThemeColor();
 }, { immediate: true });
@@ -93,6 +106,15 @@ const logout = async () => {
   })
 }
 </script>
+
+<style scoped>
+.el-dropdown-link {
+  cursor: pointer;
+  color: var(--el-color-primary);
+  display: flex;
+  align-items: center;
+}
+</style>
 <script lang="ts">
 export default {
   name: "Setting",

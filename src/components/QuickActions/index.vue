@@ -2,6 +2,9 @@
   <el-card icon="" class="quick-actions">
     <template #header>
       <div class="card-header">
+        <el-icon color="#67C23A" style="margin-right: 5px;" size="large">
+          <Compass/>
+        </el-icon>
         <span>快捷操作</span>
       </div>
     </template>

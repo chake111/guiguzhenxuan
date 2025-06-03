@@ -9,6 +9,24 @@ export const constantRoutes = [
         },
     },
     {
+        path: "/forgot-password",
+        component: () => import("@/views/forgotPassword/index.vue"),
+        name: "forgotPassword",
+        meta: {
+            title: "忘记密码",
+            hidden: true,
+        },
+    },
+    {
+        path: "/register",
+        component: () => import("@/views/register/index.vue"),
+        name: "register",
+        meta: {
+            title: "注册",
+            hidden: true,
+        },
+    },
+    {
         path: "/",
         component: () => import("@/layout/index.vue"),
         name: "layout",

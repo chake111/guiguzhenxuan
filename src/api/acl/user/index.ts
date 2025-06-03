@@ -13,6 +13,7 @@ enum API {
   SETROLE_URL = "/admin/acl/user/doAssignRole/",
   DELELETEUSER_URL = "/admin/acl/user/remove/",
   DELETEBATCHUSER_URL = "/admin/acl/user/batchRemove/",
+  REGISTER_URL = '/admin/acl/index/register', // 新增注册接口
 }
 
 export const reqLogin = (data: LoginFormData) => request.post<any, LoginResponseData>(API.LOGIN_URL, data);
@@ -30,3 +31,4 @@ export const reqAllRole = ((userId: number) => request.get<any, AllRoleResponseD
 export const reqSetUserRole = ((data: SetRoleData) => request.post<any, any>(API.SETROLE_URL, data));
 export const reqRemoveUser = (userId: number) => request.delete<any, any>(API.DELELETEUSER_URL + userId);
 export const reqRemoveBatchUser = (idList: number[]) => request.delete<any, any>(API.DELETEBATCHUSER_URL, { data: idList });
+export const reqRegister = (data: RegisterFormData) => request.post<any, any>(API.REGISTER_URL, data); // 新增注册请求方法

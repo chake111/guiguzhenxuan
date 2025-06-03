@@ -91,7 +91,6 @@ const personalStats = ref<PersonalStat[]>([
 }
 
 .card-header {
-  height: 33px;
   display: flex;
   align-items: center;
   gap: 8px;

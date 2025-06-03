@@ -63,6 +63,12 @@ export interface LoginResponseData extends ResponseData {
   data: string;
 }
 
+// 新增注册表单数据类型
+export interface RegisterFormData {
+  username: string;
+  password: string;
+}
+
 export interface UserInfoResponseData extends ResponseData {
   data:{
     routes: string[];
@@ -121,6 +127,6 @@ export interface AllRoleResponseData extends ResponseData {
 }
 
 export interface SetRoleData {
-  roleId: number, 
+  roleId: number,
   userId: number;
 }

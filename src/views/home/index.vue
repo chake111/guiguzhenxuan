@@ -45,7 +45,6 @@ import { getTime } from '@/utils/time'
 import setting from '@/setting.ts'
 import QuickActions from '@/components/QuickActions/index.vue'
 import WorkBench from '@/components/WorkBench/index.vue'
-import MessageCenter from '@/components/MessageCenter/index.vue'
 import PersonalStats from '@/components/PersonalStats/index.vue'
 import { Sunny, Cloudy, PartlyCloudy, Location } from '@element-plus/icons-vue'
 

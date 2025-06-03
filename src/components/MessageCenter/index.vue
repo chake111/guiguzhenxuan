@@ -64,7 +64,7 @@
               <el-button type="primary" size="small" @click.stop="reply(msg)">
                 回复
               </el-button>
-              <el-button type="text" size="small" @click.stop="forward(msg)">
+              <el-button link size="small" @click.stop="forward(msg)">
                 转派
               </el-button>
             </div>

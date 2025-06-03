@@ -6,7 +6,7 @@
           <Notebook />
         </el-icon>
         <span>我的今日工作流</span>
-        <el-button type="text" @click="customizeWorkbench">
+        <el-button link @click="customizeWorkbench">
           <el-icon>
             <Setting />
           </el-icon>

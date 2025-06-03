@@ -33,7 +33,7 @@
                 {{ alert.actionText }}
               </el-button>
               <el-button
-                type="text"
+                link
                 size="small"
                 v-if="alert.contactPerson"
               >

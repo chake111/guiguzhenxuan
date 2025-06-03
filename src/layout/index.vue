@@ -1,24 +1,49 @@
 <template>
-  <div class="layout_container">
-    <div class="layout_slider" :class="{ fold: LayoutSettingStore.fold }">
-      <transition name="slider-content-fade" mode="out-in">
-        <div class="slider-content" :key="String(LayoutSettingStore.fold)">
+  <div class="layout_container" :class="{ 'horizontal-layout': LayoutSettingStore.menuMode === 'horizontal' }">
+    <!-- 水平菜单模式 -->
+    <template v-if="LayoutSettingStore.menuMode === 'horizontal'">
+      <div class="layout_header">
+        <div class="header_left">
           <Logo />
+        </div>
+        <div class="header_menu">
           <el-scrollbar class="scrollbar">
-            <el-menu :collapse="LayoutSettingStore.fold" router :default-active="$route.path" background-color="#001529"
-              text-color="white">
+            <el-menu mode="horizontal" router :default-active="$route.path" background-color="#001529" text-color="white">
               <Menu :menuList="userStore.menuRoutes"></Menu>
             </el-menu>
           </el-scrollbar>
         </div>
-      </transition>
-    </div>
-    <div class="layout_tabbar" :class="{ fold: LayoutSettingStore.fold }">
-      <Tabbar></Tabbar>
-    </div>
-    <div class="layout_main" :class="{ fold: LayoutSettingStore.fold }">
-      <Main></Main>
-    </div>
+      </div>
+      <div class="layout_tabbar horizontal">
+        <Tabbar></Tabbar>
+      </div>
+      <div class="layout_main horizontal">
+        <Main></Main>
+      </div>
+    </template>
+
+    <!-- 垂直菜单模式 -->
+    <template v-else>
+      <div class="layout_slider" :class="{ fold: LayoutSettingStore.fold }">
+        <transition name="slider-content-fade" mode="out-in">
+          <div class="slider-content" :key="String(LayoutSettingStore.fold)">
+            <Logo />
+            <el-scrollbar class="scrollbar">
+              <el-menu :collapse="LayoutSettingStore.fold" router :default-active="$route.path" background-color="#001529"
+                text-color="white">
+                <Menu :menuList="userStore.menuRoutes"></Menu>
+              </el-menu>
+            </el-scrollbar>
+          </div>
+        </transition>
+      </div>
+      <div class="layout_tabbar" :class="{ fold: LayoutSettingStore.fold }">
+        <Tabbar></Tabbar>
+      </div>
+      <div class="layout_main" :class="{ fold: LayoutSettingStore.fold }">
+        <Main></Main>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -43,102 +68,132 @@ export default {
   width: 100%;
   height: 100vh;
 
-  .layout_slider {
-    color: white;
-    width: $base-menu-width;
-    height: 100vh;
-    background: $base-menu-menu-background;
-    transition: width 0.3s cubic-bezier(.55, 0, .1, 1);
-    overflow: hidden;
+  // 水平布局样式
+  &.horizontal-layout {
+    display: flex;
+    flex-direction: column;
 
-    .slider-content {
-      height: 100%;
+    .layout_header {
       display: flex;
-      flex-direction: column;
-      transition: opacity 0.3s cubic-bezier(.55, 0, .1, 1), transform 0.3s cubic-bezier(.55, 0, .1, 1);
+      align-items: center;
+      height: 60px;
       background: $base-menu-menu-background;
+      border-bottom: 1px solid #e8e8e8;
+      position: relative;
+      z-index: 1000;
+
+      .header_left {
+        width: 200px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .header_menu {
+        flex: 1;
+        overflow: hidden;
+
+        .scrollbar {
+          height: 60px;
+        }
+
+        .el-menu {
+          border: none;
+          height: 60px;
+        }
+      }
     }
 
-    .scrollbar {
+    .layout_tabbar.horizontal {
       width: 100%;
-      height: calc(100vh - $base-menu-logo-height);
+      height: $base-tabbar-height;
+      position: relative;
+      z-index: 999;
+      flex-shrink: 0;
     }
 
-    &.fold {
-      width: $base-menu-min-width;
-    }
-  }
-
-  .layout_tabbar {
-    position: fixed;
-    width: calc(100% - $base-menu-width);
-    height: $base-tabbar-height;
-    top: 0px;
-    left: $base-menu-width;
-    transition: width 0.3s cubic-bezier(.55, 0, .1, 1), left 0.3s cubic-bezier(.55, 0, .1, 1);
-
-    &.fold {
-      width: calc(100vw - $base-menu-min-width);
-      left: $base-menu-min-width;
+    .layout_main.horizontal {
+      flex: 1;
+      width: 100%;
+      padding: $base-main-padding;
+      overflow: auto;
+      position: relative;
     }
   }
 
-  .layout_main {
-    position: absolute;
-    width: calc(100% - $base-menu-width);
-    height: calc(100vh - $base-tabbar-height);
-    left: $base-menu-width;
-    top: $base-tabbar-height;
-    padding: 20px;
-    overflow-y: scroll; // 始终显示纵向滚动条
-    overflow-x: auto; // 横向滚动条仅在需要时显示，避免切换页面闪烁
-    scrollbar-gutter: stable both-edges; // 保证滚动条区域稳定
-    transition: width 0.3s cubic-bezier(.55, 0, .1, 1), left 0.3s cubic-bezier(.55, 0, .1, 1);
+  // 垂直布局样式（只在非水平布局时生效）
+  &:not(.horizontal-layout) {
+    .layout_slider {
+      color: white;
+      width: $base-menu-width;
+      height: 100vh;
+      background: $base-menu-menu-background;
+      transition: all 0.3s;
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 1001;
 
-    &.fold {
-      width: calc(100vw - $base-menu-min-width);
-      left: $base-menu-min-width;
+      .scrollbar {
+        width: 100%;
+        height: calc(100vh - $base-menu-logo-height);
+
+        .el-scrollbar__wrap {
+          overflow-x: hidden;
+        }
+
+        .el-menu {
+          border-right: none;
+        }
+      }
+
+      &.fold {
+        width: $base-menu-min-width;
+      }
+    }
+
+    .layout_tabbar {
+      position: fixed;
+      width: calc(100% - $base-menu-width);
+      height: $base-tabbar-height;
+      top: 0px;
+      left: $base-menu-width;
+      transition: all 0.3s;
+      z-index: 1000;
+
+      &.fold {
+        width: calc(100% - $base-menu-min-width);
+        left: $base-menu-min-width;
+      }
+    }
+
+    .layout_main {
+      position: absolute;
+      width: calc(100% - $base-menu-width);
+      height: calc(100% - $base-tabbar-height);
+      left: $base-menu-width;
+      top: $base-tabbar-height;
+      padding: $base-main-padding;
+      overflow: auto;
+      transition: all 0.3s;
+
+      &.fold {
+        width: calc(100% - $base-menu-min-width);
+        left: $base-menu-min-width;
+      }
     }
   }
 }
 
-/* 侧边栏内容淡入淡出动画 */
 .slider-content-fade-enter-active,
 .slider-content-fade-leave-active {
-  transition: opacity 0.3s cubic-bezier(.55, 0, .1, 1), transform 0.3s cubic-bezier(.55, 0, .1, 1);
+  transition: all 0.3s ease;
 }
 
 .slider-content-fade-enter-from,
 .slider-content-fade-leave-to {
   opacity: 0;
-  transform: translateX(-16px) scale(0.98);
+  transform: translateX(-20px);
 }
-
-.slider-content-fade-enter-to,
-.slider-content-fade-leave-from {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-}
-
-/* 滚动条美化 */
-::-webkit-scrollbar {
-  width: 0px;
-  height: 8px;
-  background: #f5f5f5;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #bdbdbd;
-  border-radius: 4px;
-  transition: background 0.3s;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #888;
-}
-
-::-webkit-scrollbar-corner {
-  background: #f5f5f5;
-}
-
 </style>

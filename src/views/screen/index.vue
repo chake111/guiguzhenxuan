@@ -3,7 +3,7 @@
     <!-- 头部标题 -->
     <header class="screen-header">
       <div class="header-left">
-        <h1>企业运营数据大屏</h1>
+        <h1>数据大屏</h1>
         <div class="header-divider"></div>
         <span class="time">{{ currentTime }}</span>
       </div>
@@ -377,7 +377,6 @@ const goHome = () => {
 .data-screen-container {
   min-height: 100vh;
   padding: 20px;
-  background-color: #f0f2f5;
   color: #333;
   font-family: 'Microsoft YaHei', sans-serif;
 }
@@ -464,7 +463,6 @@ const goHome = () => {
 
 .title {
   font-size: 14px;
-  color: #909399;
   margin: 0 0 8px;
 }
 
@@ -472,7 +470,6 @@ const goHome = () => {
   font-size: 26px;
   font-weight: bold;
   margin: 0 0 8px;
-  color: #303133;
 }
 
 .trend {
@@ -516,7 +513,6 @@ const goHome = () => {
 .card-title {
   font-size: 16px;
   font-weight: 600;
-  color: #303133;
 }
 
 .chart-container {
