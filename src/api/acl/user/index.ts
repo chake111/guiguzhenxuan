@@ -13,7 +13,7 @@ enum API {
   SETROLE_URL = "/admin/acl/user/doAssignRole/",
   DELELETEUSER_URL = "/admin/acl/user/remove/",
   DELETEBATCHUSER_URL = "/admin/acl/user/batchRemove/",
-  REGISTER_URL = '/admin/acl/index/register', // 新增注册接口
+  REGISTER_URL = '/admin/acl/index/register', // 确保这个路径与后端路由匹配
 }
 
 export const reqLogin = (data: LoginFormData) => request.post<any, LoginResponseData>(API.LOGIN_URL, data);

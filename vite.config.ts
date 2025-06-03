@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
-import { viteMockServe } from 'vite-plugin-mock';
+
 export default defineConfig({
   plugins: [
     vue(),
@@ -19,17 +19,6 @@ export default defineConfig({
     }),
     vueJsx(),
     vueDevTools(),
-    viteMockServe({
-      mockPath: 'mock',
-      localEnabled: true,
-      prodEnabled: false,
-      injectCode: `
-          import { setupProdMockServer } from './mock/_createProductionServer';
-          setupProdMockServer();
-        `,
-      watchFiles: true,
-      supportTs: true,
-    })
   ],
   resolve: {
     alias: {
@@ -40,9 +29,9 @@ export default defineConfig({
     preprocessorOptions: {
       scss: {
         javascriptEnabled: true,
-        additionalData: '@use "@/style/variable.scss" as *;',
-      },
-    },
+        additionalData: '@use "@/style/variable.scss" as *;'
+      }
+    }
   },
   server: {
     open: true

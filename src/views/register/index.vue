@@ -77,20 +77,26 @@ const rules = {
 };
 
 const submitForm = async () => {
-    try {
-        await registerForms.value.validate();
-        // 调用注册API
-        const result = await reqRegister({ username: registerForm.username, password: registerForm.password });
-        if (result.code === 200) {
-            ElMessage.success('注册成功！');
-            $router.push('/login');
-        } else {
-            ElMessage.error(result.message || '注册失败，请稍后再试。');
-        }
-    } catch (error) {
-        console.error('表单验证失败或提交错误:', error);
-        ElMessage.error('注册失败，请检查输入。');
+  try {
+    await registerForms.value.validate();
+    // 调用注册API
+    console.log('提交注册表单:', { username: registerForm.username, password: '***' });
+    const result = await reqRegister({ username: registerForm.username, password: registerForm.password });
+    if (result.code === 200) {
+      ElMessage.success('注册成功！');
+      $router.push('/login');
+    } else {
+      ElMessage.error(result.message || '注册失败，请稍后再试。');
     }
+  } catch (error) {
+    console.error('表单验证失败或提交错误:', error);
+    if (error.response) {
+      console.error('错误响应:', error.response.data);
+      ElMessage.error(`注册失败: ${error.response.data.message || '未知错误'}`);
+    } else {
+      ElMessage.error('注册失败，请检查输入。');
+    }
+  }
 };
 </script>
 

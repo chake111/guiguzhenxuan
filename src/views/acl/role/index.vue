@@ -128,6 +128,8 @@ onMounted(() => {
 const getHasRole = async (pager = 1) => {
   pageNo.value = pager;
   let result: RoleResponseData = await reqAllRoleList(pager, limit.value, keyword.value);
+  console.log("角色新增后请求：",result.data);
+
   if (result.code === 200) {
     allRole.value = result.data.records;
     total.value = result.data.total;

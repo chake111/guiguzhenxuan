@@ -4,7 +4,7 @@ import { useUserStore } from "@/stores/user";
 
 
 let request = axios.create({
-    baseURL: import.meta.env.VITE_APP_BASE_API, 
+    baseURL: import.meta.env.VITE_APP_BASE_API,
     timeout: 5000,
 })
 request.interceptors.request.use(
@@ -12,6 +12,8 @@ request.interceptors.request.use(
         let userStore = useUserStore();
         if (userStore.token) {
             config.headers.token = userStore.token;
+            // 添加这一行，使用Bearer格式
+            config.headers.authorization = `Bearer ${userStore.token}`;
         }
         return config;
     }

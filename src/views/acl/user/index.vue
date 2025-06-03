@@ -103,9 +103,7 @@ import type { AllRole, AllRoleResponseData, Records, SetRoleData, User, UserResp
 import { reqAddOrUpdateUser, reqAllRole, reqALLUserInfo, reqRemoveBatchUser, reqRemoveUser, reqSetUserRole } from '@/api/acl/user';
 import { nextTick, onMounted, reactive, ref } from 'vue';
 import { ElMessage } from 'element-plus';
-import { useLayoutSettingStore } from '@/stores/modules/types/setting';
 
-let settingStore = useLayoutSettingStore();
 let pageNo = ref<number>(1);
 let pageSize = ref<number>(5);
 let total = ref<number>(0);
@@ -114,7 +112,6 @@ let drawer = ref<boolean>(false);
 let drawer1 = ref<boolean>(false);
 let userRoleId = ref<number | null>(null);  // 改为单个角色ID
 let allRoleArr = ref<AllRole>([]);
-let isIndeterminate = ref<boolean>(false);
 let selectIdArr = ref<User[]>([]);
 let userParams = reactive<User>({
   name: '',
@@ -258,9 +255,10 @@ const setRole = async (row: User) => {
 
   try {
     const result: AllRoleResponseData = await reqAllRole(userParams.id as number);
+    console.log("新增角色后，在用户管理页面请求的：", result);
+
     if (result.code === 200) {
       allRoleArr.value = result.data.allRolesList;
-      // 如果有分配的角色，选择第一个，否则设为null
       userRoleId.value = result.data.assignRoles.length > 0 ? result.data.assignRoles[0].id as number : null;
     }
   } catch (error) {
@@ -311,7 +309,7 @@ const confirmClick = async () => {
 
   let data: SetRoleData = {
     userId: (userParams.id as number),
-    roleId: userRoleId.value, // 改为单个角色ID
+    roleId: userRoleId.value,
   }
   let result: any = await reqSetUserRole(data);
   if (result.code == 200) {

@@ -1,6 +1,7 @@
 import { MockMethod } from 'vite-plugin-mock';
 import { reactive } from 'vue';
-import { roles as roles1 } from './role';
+import { roles } from './role';
+
 
 const users = reactive([
   {
@@ -51,8 +52,6 @@ userRoles.set(1, 1);
 userRoles.set(2, 2);
 userRoles.set(3, 3);
 userRoles.set(4, 6);
-
-const roles = roles1;
 
 export default [
   {

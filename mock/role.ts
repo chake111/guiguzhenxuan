@@ -6,10 +6,6 @@ export const roles = reactive([
   { id: 1, roleName: '超级管理员', remark: '拥有所有权限', createTime: '2023-01-01 09:15:23', updateTime: '2023-01-15 14:32:18' },
   { id: 2, roleName: '普通用户', remark: '基础权限', createTime: '2023-01-02 10:42:17', updateTime: '2023-01-18 16:28:45' },
   { id: 3, roleName: '运营人员', remark: '运营相关权限', createTime: '2023-01-03 11:28:56', updateTime: '2023-01-22 09:47:12' },
-  { id: 4, roleName: 'VIP用户', remark: 'VIP用户权限', createTime: '2023-01-04 14:17:33', updateTime: '2023-01-25 11:15:27' },
-  { id: 5, roleName: '测试用户', remark: '测试用户权限', createTime: '2023-01-05 16:23:41', updateTime: '2023-01-28 13:52:09' },
-  { id: 6, roleName: '开发人员', remark: '开发相关权限', createTime: '2023-01-06 08:45:29', updateTime: '2023-02-01 15:38:44' },
-  { id: 7, roleName: '客服人员', remark: '客服相关权限', createTime: '2023-01-07 13:56:18', updateTime: '2023-02-03 10:21:36' },
 ]);
 
 // 角色权限关系存储
@@ -384,3 +380,5 @@ export default [
     }
   }
 ] as MockMethod[];
+
+
