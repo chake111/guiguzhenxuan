@@ -9,38 +9,6 @@
 
     <!-- 主要内容区域 -->
     <div class="login-content">
-      <!-- 左侧品牌区域 -->
-      <div class="brand-section">
-        <div class="brand-content">
-          <div class="logo">
-            <img src="@/assets/images/login_form.png" alt="Logo" />
-          </div>
-          <h1 class="brand-title">后台管理系统</h1>
-          <p class="brand-subtitle">现代化的管理平台</p>
-          <div class="feature-list">
-            <div class="feature-item">
-              <el-icon>
-                <Check />
-              </el-icon>
-              <span>安全可靠</span>
-            </div>
-            <div class="feature-item">
-              <el-icon>
-                <Check />
-              </el-icon>
-              <span>高效便捷</span>
-            </div>
-            <div class="feature-item">
-              <el-icon>
-                <Check />
-              </el-icon>
-              <span>智能分析</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 右侧登录表单区域 -->
       <div class="form-section">
         <div class="form-container">
           <div class="form-header">
@@ -97,7 +65,6 @@
 import { User, Lock, Check } from '@element-plus/icons-vue'
 import { nextTick, reactive, ref, onMounted } from 'vue';
 import { useUserStore } from '@/stores/user';
-import type { loginForm } from '@/api/acl/user/type';
 import { useRouter, useRoute } from 'vue-router';
 import { ElNotification } from 'element-plus';
 import { getTime } from '@/utils/time';
@@ -139,14 +106,11 @@ const login = async () => {
   try {
     await userStore.userLogin(loginForm);
 
-    // 处理记住密码逻辑
     if (rememberPassword.value) {
-      // 保存用户名和密码到本地存储
       localStorage.setItem('rememberedUsername', loginForm.username)
       localStorage.setItem('rememberedPassword', loginForm.password)
       localStorage.setItem('rememberPassword', 'true')
     } else {
-      // 清除本地存储的用户信息
       localStorage.removeItem('rememberedUsername')
       localStorage.removeItem('rememberedPassword')
       localStorage.removeItem('rememberPassword')
@@ -207,7 +171,7 @@ const rules = {
   position: relative;
   width: 100%;
   height: 100vh;
-  background-color: #f0f2f5; // 与首页背景色保持一致
+  background-color: #f0f2f5;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -226,7 +190,7 @@ const rules = {
   .circle {
     position: absolute;
     border-radius: 50%;
-    background: rgba(79, 70, 229, 0.1); // 更淡的主题色，与首页风格一致
+    background: rgba(79, 70, 229, 0.1);
     animation: float 6s ease-in-out infinite;
 
     &.circle-1 {
@@ -272,7 +236,7 @@ const rules = {
   position: relative;
   z-index: 2;
   display: flex;
-  width: 90%;
+  width: 50%;
   max-width: 1200px;
   height: 600px;
   background: #ffffff;
@@ -442,14 +406,10 @@ const rules = {
       font-size: 16px;
       font-weight: 600;
       border-radius: 8px;
-      background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+      // background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
       border: none;
       transition: all 0.3s ease;
 
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-      }
 
       &:active {
         transform: translateY(0);
@@ -468,7 +428,6 @@ const rules = {
   }
 }
 
-// 响应式设计
 @media (max-width: 768px) {
   .login-content {
     flex-direction: column;

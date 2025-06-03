@@ -377,7 +377,6 @@ const goHome = () => {
 .data-screen-container {
   min-height: 100vh;
   padding: 20px;
-  color: #333;
   font-family: 'Microsoft YaHei', sans-serif;
 }
 
@@ -397,12 +396,6 @@ const goHome = () => {
 
 .screen-header h1 {
   font-size: 26px;
-  margin: 0;
-  color: #303133;
-  font-weight: 600;
-  background: linear-gradient(to right, #409EFF, #67C23A);
-  -webkit-background-clip: text;
-  color: transparent;
 }
 
 .header-divider {
@@ -420,7 +413,6 @@ const goHome = () => {
 
 .time {
   font-size: 16px;
-  color: #606266;
   font-weight: 500;
 }
 

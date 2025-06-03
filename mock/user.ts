@@ -113,7 +113,10 @@ export default [
 
       switch (userRole?.roleName) {
         case '超级管理员':
-          routes = ['Product', 'Acl', 'User', 'Role', 'Permission'];
+          routes = [
+            'Product', 'Trademark', 'Attr', 'Spu', 'Sku',
+            'Acl', 'User', 'Role', 'Permission'
+          ];
           buttons = ['cuser', 'uuser', 'duser', 'crole', 'urole', 'drole'];
           break;
         case '开发人员':
