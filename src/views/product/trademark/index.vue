@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-card class="box-card">
-      <el-button type="primary" size="default" icon="Plus" @click="addTrademark">添加品牌</el-button>
+      <el-button type="primary" size="default" icon="Plus" @click="addTrademark" v-has="`btn.Trademark.add`">添加品牌</el-button>
       <el-table style="margin:10px 0px" border :data="trademarkArr">
         <el-table-column label="序号" width="80px" align="center" type="index"></el-table-column>
         <el-table-column label="品牌名称">
@@ -63,6 +63,7 @@ import type { Records, TrademarkResponseData, Trademark } from '@/api/product/tr
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router';
 import { Plus } from '@element-plus/icons-vue'
+
 let pageNo = ref<number>(1);
 let limit = ref<number>(3);
 let total = ref<number>(0);

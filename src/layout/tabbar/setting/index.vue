@@ -27,8 +27,8 @@
         </el-form-item>
         <el-form-item label="菜单模式">
           <el-radio-group v-model="layoutSettingStore.menuMode">
-            <el-radio label="vertical">垂直</el-radio>
-            <el-radio label="horizontal">水平</el-radio>
+            <el-radio value="vertical">垂直</el-radio>
+            <el-radio value="horizontal">水平</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>

@@ -21,7 +21,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         try {
           await userStore.userInfo();
-          next();
+          next({...to});
         } catch (error) {
           ElMessage.error(error as any);
           await userStore.userLogout();

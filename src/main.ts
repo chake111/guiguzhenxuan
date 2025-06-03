@@ -1,3 +1,4 @@
+import 'default-passive-events';
 import { createApp } from 'vue';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
@@ -9,6 +10,7 @@ import router from '@/router';
 import App from '@/App.vue'
 import * as ElementPlusIconVue from '@element-plus/icons-vue';
 import '@/permission';
+import { isHasButton } from './directive/has';
 
 const app = createApp(App)
 app.use(pinia)
@@ -17,5 +19,6 @@ for (const [key, component] of Object.entries(ElementPlusIconVue)) {
 }
 app.use(ElementPlus, { locale: zhCn })
 app.use(router)
+isHasButton(app);
 
 app.mount('#app')
